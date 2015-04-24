@@ -1,0 +1,135 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:composite="http://xmlns.jcp.org/jsf/composite" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:x="http://myfaces.apache.org/tomahawk" xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites" xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <composite:interface>
+    </composite:interface>
+
+    <composite:implementation>
+
+        <script src="template/js/plugins/flot/jquery.flot.js"></script>
+        <script src="template/js/plugins/flot/jquery.flot.bar.order.min.js"></script>
+        <script src="template/js/plugins/flot/jquery.flot.pie.min.js"></script>
+        <script src="template/js/plugins/flot/jquery.flot.resize.min.js"></script>
+        <script src="template/js/plugins/flot/jquery.flot.stack.js"></script>
+        <script src="template/js/plugins/flot/jquery.flot.JUMlib.js"></script>
+        <script src="template/js/plugins/flot/jquery.flot.spider.js"></script>
+
+        <h:form id="statisticplugin" rendered="#{NavigationForm.aktuell == 'a41'}">
+            <div class="row">
+                <div class="col-sm-12">
+
+
+                    <span>
+                        <h:outputText id="uaid2" value="#{msgs.defineStatisticalQuestion}" />
+                    </span>
+                </div>
+            </div>
+            <!--             <div class="row"> -->
+            <!--                 <div class="col-sm-3"> -->
+            <!--                     <intranda:formInputCalendar2 name="startdate" label="#{msgs.zeitraum} #{msgs.from}" field="#{StatisticalQuestionBean.timeFilterFrom}" required="false" /> -->
+            <!--                 </div> -->
+            <!--                 <div class="col-sm-3"> -->
+            <!--                     <intranda:formInputCalendar2 name="to" label="#{msgs.to}" field="#{StatisticalQuestionBean.timeFilterTo}" required="false" /> -->
+
+            <!--                 </div> -->
+            <!--                 <div class="col-sm-6"> -->
+            <!--                     <h:outputText id="uaid8" style="font-weight:bold" value=" - #{msgs.orLast} - " /> -->
+            <!--                     <h:inputText id="uaid9" style="width:130px;text-align:right" required="false" value="#{StatisticalQuestionBean.sourceNumberOfTimeUnitsAsString}" /> -->
+            <!--                     <h:selectOneMenu id="uaid10" style="width:130px" value="#{StatisticalQuestionBean.sourceTimeUnit}" converter="StatisticsTimeUnitConverter"> -->
+            <!--                         <f:selectItems id="uaid11" value="#{StatisticalQuestionBean.allTimeUnits}" var="unit" itemLabel="#{unit.title}" itemValue="#{unit}" /> -->
+            <!--                     </h:selectOneMenu> -->
+            <!--                 </div> -->
+
+            <!--             </div> -->
+            <!--             <div class="row"> -->
+            <!--                 <div class="col-sm-3"> -->
+            <!--                     <h:outputText id="uaid15" value="#{msgs.einheit}" style="width:150px" /> -->
+
+            <!--                     <h:selectOneMenu id="uaid16" style="width:130px" value="#{StatisticalQuestionBean.currentPlugin.targetTimeUnit}" converter="StatisticsTimeUnitConverter"> -->
+            <!--                         <f:selectItems id="uaid17" value="#{StatisticalQuestionBean.allTimeUnits}" var="unit" itemLabel="#{unit.title}" itemValue="#{unit}" /> -->
+            <!--                     </h:selectOneMenu> -->
+            <!--                 </div> -->
+            <!--              </div> -->
+
+            <div class="row">
+                <div class="control-group">
+                    <div class="controls">
+                        <x:commandButton id="myStatisticButton" title="#{msgs.calculateStatistics}" value="#{msgs.calculateStatistics}" action="#{StatisticalQuestionBean.calculate}" styleClass="btn btn-primary">
+
+                            <f:ajax execute="@form" render="@form"></f:ajax>
+                        </x:commandButton>
+                    </div>
+                </div>
+            </div>
+
+            <h:inputText value="#{StatisticalQuestionBean.data}" id="datafield" style="display:none" />
+            <!--             <h:inputText value="#{StatisticalQuestionBean.currentPlugin.axis}" id="axisfield" style="display:none" /> -->
+            <!--             <h:inputText value="#{StatisticalQuestionBean.currentPlugin.max}" id="maxfield" style="display:none" /> -->
+        </h:form>
+
+        <div >
+            <div id="placeholder" class='flot'></div>
+        </div>
+        <script type="text/javascript">
+       
+       
+                                    function plotTable() {
+                                        var data = $.parseJSON(document.getElementById('statisticplugin:datafield').value);
+                                        function plotWithOptions() {
+                                        	
+                                        	$.plot('#placeholder', data, {
+                                        		 series: {
+                                        		        pie: {
+                                        		            show: true,
+                                        		            label: {
+                                        		            	show: true,
+                                        		            	
+                                        		            
+                                        		            },
+                                        		        }
+                                        		    },
+                                        		    grid: {
+                                        		        hoverable: true,
+                                        		        clickable: true
+                                        		    }
+                                        	});
+                                        	
+                                          
+                                        }
+                                        console.log('start plotting');
+                                        plotWithOptions();
+
+                                    }
+
+                                  
+
+                                    $("#placeholder").bind('plotclick',function(e,pos,obj){
+                                    	var div = '<div class="chart-info">' + obj.series.label + ': ' + obj.series.data[0][1] + '</div>';
+                                    	if ( $( '.chart-info' ).length > 0 ) {
+                                    		$( '.chart-info' ).remove();
+                                    	}
+                                    	$( 'body' ).append( div );
+                                    	$( '.chart-info' ).hide().css({ 'position': 'absolute', 'top': pos.pageY, 'left': pos.pageX }).show();
+                                    });
+                                    
+                                    // AJAX Eventlistener
+                                    jsf.ajax.addOnEvent(function(data) {
+                                        var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
+
+                                        switch (ajaxstatus) {
+                                        case "begin": // This is called right before ajax request is been sent.
+                                            break;
+
+                                        case "complete": // This is called right after ajax response is received.
+                                            break;
+
+                                        case "success": // This is called when ajax response is successfully processed.
+                                                plotTable();
+                                            break;
+                                        }
+                                    });
+                                </script>
+    </composite:implementation>
+
+</ui:composition>
+
+

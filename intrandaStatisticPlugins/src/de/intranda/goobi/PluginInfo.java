@@ -1,6 +1,6 @@
 package de.intranda.goobi;
 
-
+import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,5 +39,4 @@ public class PluginInfo {
 
         System.out.println("\n+++++++++++++++++++++++++++++++++++++++++++++++++++++");
     }
-
 }
