@@ -1,6 +1,5 @@
 package de.intranda.goobi.plugins;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -20,9 +19,7 @@ import org.goobi.beans.Usergroup;
 import org.goobi.production.flow.statistics.hibernate.FilterHelper;
 import org.goobi.production.plugin.interfaces.AbstractStatisticsPlugin;
 import org.goobi.production.plugin.interfaces.IStatisticPlugin;
-import org.json.simple.JSONArray;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.intranda.goobi.plugins.util.PieType;
@@ -36,7 +33,7 @@ public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatis
 
     private static final Logger logger = Logger.getLogger(UserGroupPlugin.class);
 
-    //    private List<PieType> list;
+        private List<PieType> list;
 
     private String data;
 
@@ -78,7 +75,7 @@ public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatis
                 
         */
 
-        List<PieType> list = new ArrayList<PieType>();
+       list = new ArrayList<PieType>();
 
         for (String groupName : counter.keySet()) {
             int value = counter.get(groupName);
@@ -92,7 +89,6 @@ public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatis
         }
 
         StringWriter writer = new StringWriter();
-
         ObjectMapper mapper = new ObjectMapper();
 
         try {
@@ -102,12 +98,12 @@ public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatis
         }
 
         data = writer.toString();
-        
-        Map map = new HashMap();
+
+        Map<String, List<PieType>> map = new HashMap<>();
         map.put("groups", list);
-        
+
         XLSTransformer transformer = new XLSTransformer();
-//        transformer.markAsFixedSizeCollection("employee");
+        transformer.markAsFixedSizeCollection("groups");
         try {
             transformer.transformXLS("/home/robert/template.xls", map, "/home/robert/test.xls");
         } catch (ParsePropertyException | InvalidFormatException | IOException e) {
@@ -154,4 +150,11 @@ public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatis
 
     }
 
+    public void setDataList(List<PieType> list) {
+        this.list = list;
+    }
+    
+    public List<PieType> getDataList() {
+        return list;
+    }
 }
