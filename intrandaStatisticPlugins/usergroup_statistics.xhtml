@@ -67,18 +67,22 @@
 
 
             <div class="col-sm-6">
-            <table>
-                <ui:repeat var="datarow" value="#{StatisticalQuestionBean.currentPlugin.dataList}" >
-                    <tr>
-                        <td>
-                            <h:outputText value="#{datarow.label}" />
-                        </td>
-                        <td>
-                            <h:outputText value="#{datarow.data}" />
-                        </td>
-                    </tr>
-                </ui:repeat>
+                <table>
+                    <ui:repeat var="datarow" value="#{StatisticalQuestionBean.currentPlugin.dataList}">
+                        <tr>
+                            <td>
+                                <h:outputText value="#{datarow.label}" />
+                            </td>
+                            <td>
+                                <h:outputText value="#{datarow.data}" />
+                            </td>
+                        </tr>
+                    </ui:repeat>
                 </table>
+
+                <h:commandLink action="#{StatisticalQuestionBean.currentPlugin.createExcelFile}" rendered="#{StatisticalQuestionBean.data != null}">
+                    <h:outputText value="#{msgs.downloadExcel}" />
+                </h:commandLink>
             </div>
         </h:form>
 
@@ -86,76 +90,60 @@
             <div id="placeholder" class='flot'></div>
         </div>
         <script type="text/javascript">
-									function plotTable() {
-										var data = $
-												.parseJSON(document
-														.getElementById('statisticplugin:datafield').value);
-										function plotWithOptions() {
+				function plotTable() {
+					var data = $.parseJSON(document.getElementById('statisticplugin:datafield').value);
+					function plotWithOptions() {
 
-											$.plot('#placeholder', data, {
-												series : {
-													pie : {
-														show : true,
-														label : {
-															show : true,
-
-														},
-													}
-												},
-												grid : {
-													hoverable : true,
-													clickable : true
-												}
-											});
-
-										}
-										console.log('start plotting');
-										plotWithOptions();
-
+						$.plot('#placeholder', data, {
+							series : {
+								pie : {
+									show : true,
+									label : {
+										show : true,
 									}
+								}
+							},
+							grid : {
+								hoverable : true,
+								clickable : true
+							}
+						});
 
-									$("#placeholder")
-											.bind(
-													'plotclick',
-													function(e, pos, obj) {
-														var div = '<div class="chart-info">'
-																+ obj.series.label
-																+ ': '
-																+ obj.series.data[0][1]
-																+ '</div>';
-														if ($('.chart-info').length > 0) {
-															$('.chart-info')
-																	.remove();
-														}
-														$('body').append(div);
-														$('.chart-info')
-																.hide()
-																.css(
-																		{
-																			'position' : 'absolute',
-																			'top' : pos.pageY,
-																			'left' : pos.pageX
-																		})
-																.show();
-													});
+					}
+					plotWithOptions();
+				}
 
-									// AJAX Eventlistener
-									jsf.ajax.addOnEvent(function(data) {
-										var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
-
-										switch (ajaxstatus) {
-										case "begin": // This is called right before ajax request is been sent.
-											break;
-
-										case "complete": // This is called right after ajax response is received.
-											break;
-
-										case "success": // This is called when ajax response is successfully processed.
-											plotTable();
-											break;
-										}
+				$("#placeholder").on('plotclick',
+								function(e, pos, obj) {
+									var div = '<div class="chart-info">' + obj.series.label + ': ' + obj.series.data[0][1] + '</div>';
+									if ($('.chart-info').length > 0) {
+										$('.chart-info').remove();
+									}
+									$('body').append(div);
+									$('.chart-info').hide().css(
+										{   'position' : 'absolute',
+											'top' : pos.pageY,
+											'left' : pos.pageX
+										}).show();
 									});
-								</script>
+
+				// AJAX Eventlistener
+				jsf.ajax.addOnEvent(function(data) {
+					var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
+
+					switch (ajaxstatus) {
+					case "begin": // This is called right before ajax request is been sent.
+						break;
+
+					case "complete": // This is called right after ajax response is received.
+						break;
+
+					case "success": // This is called when ajax response is successfully processed.
+						plotTable();
+						break;
+					}
+				});
+				</script>
 
 
 

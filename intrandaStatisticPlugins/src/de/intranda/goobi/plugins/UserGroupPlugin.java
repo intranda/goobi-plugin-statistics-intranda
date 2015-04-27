@@ -1,12 +1,21 @@
 package de.intranda.goobi.plugins;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jxls.exception.ParsePropertyException;
 import net.sf.jxls.transformer.XLSTransformer;
@@ -23,6 +32,7 @@ import org.goobi.production.plugin.interfaces.IStatisticPlugin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.intranda.goobi.plugins.util.PieType;
+import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.persistence.managers.StepManager;
 import de.sub.goobi.persistence.managers.UsergroupManager;
 
@@ -33,7 +43,7 @@ public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatis
 
     private static final Logger logger = Logger.getLogger(UserGroupPlugin.class);
 
-        private List<PieType> list;
+    private List<PieType> list;
 
     private String data;
 
@@ -50,7 +60,7 @@ public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatis
                                     + filterString + ")");
         }
 
-        Map<String, Integer> counter = new HashMap<String, Integer>();
+        Map<String, Integer> counter = new TreeMap<String, Integer>();
 
         for (Step step : stepList) {
             for (Usergroup group : UsergroupManager.getUserGroupsForStep(step.getId())) {
@@ -63,19 +73,7 @@ public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatis
             }
         }
 
-        //        {{label: "Asia", data: 4119630000, color: "#005CDE" },
-        //        { label: "Latin America", data: 590950000, color: "#00A36A" },
-        //        { label: "Africa", data: 1012960000, color: "#7D0096" },
-        //        { label: "Oceania", data: 35100000, color: "#992B00" },
-        //        { label: "Europe", data: 727080000, color: "#DE000F" },
-        //        { label: "North America", data: 344120000, color: "#ED7B00" }}    
-        /*
-                {{label: "Quantitative QA Officer", data: 3, color: "#93D3C0"},{label: "ImagingOfficer", data: 1477, color: "#878C3C"},{label: "Qualitative QA Officer", data: 11, color: "#B0EB23"}, {label: "Projectmanager", data: 71, color: "#04600E"}, {label: "Administration", data: 339, color: "#624EB6"}, {label: "MetadataOfficer", data: 567, color: "#CDAD87"}, {label: "AutomaticTasks", data: 154, color: "#A5B2C2"}, {label: "PreparationOfficer", data: 782, color: "#767D92"}{label: "Archivist", data: 1, color: "#210050"}}
-               
-                
-        */
-
-       list = new ArrayList<PieType>();
+        list = new ArrayList<PieType>();
 
         for (String groupName : counter.keySet()) {
             int value = counter.get(groupName);
@@ -98,17 +96,6 @@ public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatis
         }
 
         data = writer.toString();
-
-        Map<String, List<PieType>> map = new HashMap<>();
-        map.put("groups", list);
-
-        XLSTransformer transformer = new XLSTransformer();
-        transformer.markAsFixedSizeCollection("groups");
-        try {
-            transformer.transformXLS("/home/robert/template.xls", map, "/home/robert/test.xls");
-        } catch (ParsePropertyException | InvalidFormatException | IOException e) {
-            logger.error(e);
-        }
 
     }
 
@@ -153,8 +140,48 @@ public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatis
     public void setDataList(List<PieType> list) {
         this.list = list;
     }
-    
+
     public List<PieType> getDataList() {
         return list;
+    }
+
+    public void createExcelFile() {
+        try {
+            File tempFile = File.createTempFile("test", ".xls");
+
+            Map<String, List<PieType>> map = new HashMap<>();
+            map.put("groups", list);
+
+            XLSTransformer transformer = new XLSTransformer();
+            transformer.markAsFixedSizeCollection("groups");
+
+            transformer.transformXLS("/home/robert/template.xls", map, tempFile.getAbsolutePath());
+
+            if (tempFile.exists()) {
+                FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
+
+                HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+                OutputStream out = response.getOutputStream();
+                response.setContentType("application/vnd.ms-excel");
+                response.setHeader("Content-Disposition", "attachment;filename=\"export.xls\"");
+                byte[] buf = new byte[8192];
+
+                InputStream is = new FileInputStream(tempFile);
+
+                int c = 0;
+
+                while ((c = is.read(buf, 0, buf.length)) > 0) {
+                    out.write(buf, 0, c);
+                    out.flush();
+                }
+
+                out.flush();
+                is.close();
+                facesContext.responseComplete();
+            }
+        } catch (ParsePropertyException | InvalidFormatException | IOException e) {
+            logger.error(e);
+        }
+
     }
 }
