@@ -4,18 +4,18 @@
 
 <project name="intranda Statistics Plugin" basedir="." default="deploy">
 
-	<!-- ================================= 
+    <!-- ================================= 
 	        properties             
 	     ================================= -->
-	<property name="filename" value="intrandaStatisticsPlugin" />
-	<property name="dir.build" value="bin" />
-	<property name="dir.src" value="src" />
-	<property name="dir.test" value="test/src" />
-	<property name="dir.deploy" value="deploy" />
-	<property name="dir.javadoc" value="doc" />
-	<property name="pluginFolderWin" value="C:/Goobi/plugins/statistics/" />
-	<property name="pluginFolderUnix" value="/opt/digiverso/goobi/plugins/statistics/" />
-	<property name="dir.pmd" value="/opt/pmd" />
+    <property name="filename" value="intrandaStatisticsPlugin" />
+    <property name="dir.build" value="bin" />
+    <property name="dir.src" value="src" />
+    <property name="dir.test" value="test/src" />
+    <property name="dir.deploy" value="deploy" />
+    <property name="dir.javadoc" value="doc" />
+    <property name="pluginFolderWin" value="C:/Goobi/plugins/statistics/" />
+    <property name="pluginFolderUnix" value="/opt/digiverso/goobi/plugins/statistics/" />
+    <property name="dir.pmd" value="/opt/pmd" />
 
     <path id="classpath">
         <fileset dir="/opt/digiverso/goobi-jsf2/lib" />
@@ -27,14 +27,15 @@
     </tstamp>
 
     <!-- ================================= 
-         General targets: clean, createDirs, git.revision
-	     ================================= -->
+             General targets: clean, createDirs, git.revision
+    	     ================================= -->
 
     <!-- Clean up generated and compiled files. -->
     <target name="clean" description="Clean up generated and compiled files.">
         <echo>Cleaning up workspace...</echo>
         <!--<delete dir="${dir.build}" />-->
         <delete dir="${dir.deploy}" />
+
     </target>
 
     <!-- Create needed directories -->
@@ -62,8 +63,8 @@
     </target>
 
     <!-- ================================= 
-         copy all files to final places
-	     ================================= -->
+             copy all files to final places
+    	     ================================= -->
 
     <!--  copyToPluginFolder, depending on OS -->
     <target name="copyToPluginFolder" depends="linux,win32">
@@ -72,19 +73,19 @@
     <target name="linux" if="isUnix">
         <echo>Using Linux path: ${pluginFolderUnix}</echo>
         <copy tofile="${pluginFolderUnix}/${filename}.jar" file="${dir.deploy}/${filename}-${git.revision}.jar" overwrite="true" />
+        <copy tofile="${pluginFolderUnix}/${filename}-GUI.jar" file="${dir.deploy}/${filename}-GUI.jar" overwrite="true" />
 
     </target>
     <target name="win32" if="isWindows">
         <echo>Using Windows path: ${pluginFolderWin}</echo>
         <copy tofile="${pluginFolderWin}$${filename}-${git.revision}.jar" file="${dir.deploy}/${filename}-${git.revision}.jar" overwrite="true" />
+        <copy tofile="${pluginFolderWin}/${filename}-GUI.jar" file="${dir.deploy}/${filename}-GUI.jar" overwrite="true" />
 
     </target>
 
     <!-- ================================= 
-         Compile the sources
-	     ================================= -->
-
-
+             Compile the sources
+    	     ================================= -->
 
     <target name="compile">
         <echo>Using eclipse compiler</echo>
@@ -96,8 +97,8 @@
     </target>
 
     <!-- ================================= 
-         Include the libraries
-	     ================================= -->
+             Include the libraries
+    	     ================================= -->
 
 
 
@@ -118,8 +119,8 @@
     </target>
 
     <!-- ================================= 
-         Compile the jar
-	     ================================= -->
+             Compile the jar
+    	     ================================= -->
 
 
     <target name="jar" depends="libs">
@@ -142,10 +143,9 @@
         </jar>
     </target>
 
-
     <!-- ================================= 
-	              RUNNABLE JAR
-		 ================================= -->
+    	              RUNNABLE JAR
+    		 ================================= -->
 
     <target name="jar.runnable" depends="git.revision">
         <echo>Compile sources ...</echo>
@@ -172,18 +172,19 @@
 
         <echo>Generating jar file: ${dir.deploy}/${filename}-${git.revision}.jar</echo>
         <antcall target="jar" />
+        <antcall target="jar-gui" />
     </target>
 
     <!-- ================================= 
-                  DISTRIBUTION
-	     ================================= -->
+                      DISTRIBUTION
+    	     ================================= -->
 
     <!-- Run all targets in appropiate order for clean compile-->
     <target name="dist" depends="clean, createDirs, git.revision, jar.runnable" description="Creating everything for Jenkins." />
 
     <!-- ================================= 
-                  DEPLOY
-	     ================================= -->
+                      DEPLOY
+    	     ================================= -->
 
     <!-- Default target that compiles the jar from eclipse and copies it to the right folder depending on operating system-->
     <target name="deploy" depends="jar.runnable" description="Default target for Eclipse compiling with correct deployment">
@@ -198,3 +199,4 @@
     </target>
 
 </project>
+

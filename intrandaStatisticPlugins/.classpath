@@ -25,5 +25,6 @@
 	<classpathentry kind="var" path="TOMCAT_HOME/lib/jsp-api.jar"/>
 	<classpathentry kind="var" path="TOMCAT_HOME/lib/el-api.jar"/>
 	<classpathentry kind="var" path="TOMCAT_HOME/lib/annotations-api.jar"/>
+	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/iText-2.1.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
