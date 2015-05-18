@@ -55,23 +55,23 @@
                 </div>
                 <div class="controls">
                     <x:commandButton id="myStatisticButton" title="#{msgs.calculateStatistics}" value="#{msgs.calculateStatistics}" action="#{StatisticalQuestionBean.calculate}" styleClass="btn btn-primary">
-<!-- <f:ajax execute="@this" render="@this"></f:ajax> -->
                     </x:commandButton>
                 </div>
             </div>
 
             <div class="row">
                 <ui:repeat value="#{StatisticalQuestionBean.currentPlugin.projectDataList}" var="projectData" varStatus="status">
-                    <h:panelGroup layout="block" rendered="#{projectData.selected}" styleClass="col-sm-4" id="element" >
+
+                    <h:panelGroup layout="block" rendered="#{projectData.selected}" styleClass="col-sm-4" id="element">
                         <h3>
                             <h:outputText value="#{projectData.project.titel} - #{projectData.endDate}" />
                         </h3>
                         <br />
-                        
+
                         <div id="placeholder_#{status.index}" class='flot'></div>
 
                         <br />
-                        
+
                         <table>
                             <ui:repeat var="datarow" value="#{projectData.list}">
                                 <tr>
@@ -86,14 +86,14 @@
                         </table>
 
 
-                            <br />
-                            <h:commandLink action="#{projectData.createExcelFile}" rendered="#{projectData.data != null}">
-                                <h:outputText value="#{msgs.downloadExcel}" />
-                            </h:commandLink>
-                            <br />
-                            <h:commandLink action="#{projectData.createPdfFile}" rendered="#{projectData.data != null}">
-                                <h:outputText value="#{msgs.createPdfFile}" />
-                            </h:commandLink>
+                        <br />
+                        <h:commandLink action="#{projectData.createExcelFile}" rendered="#{projectData.data != null}">
+                            <h:outputText value="#{msgs.downloadExcel}" />
+                        </h:commandLink>
+                        <br />
+                        <h:commandLink action="#{projectData.createPdfFile}" rendered="#{projectData.data != null}">
+                            <h:outputText value="#{msgs.createPdfFile}" />
+                        </h:commandLink>
 
                         <div id="datafield_#{status.index}">
                             <h:inputText value="#{projectData.data}" styleClass="rawdata" style="display:none" />
@@ -151,57 +151,14 @@
                                                     });
                                     
                                     plotTable();
+                                    
                         		
                         	} );
                                 </script>
                     </h:panelGroup>
-
                 </ui:repeat>
-
-
             </div>
-
-
-            <!--             <div class="row"> -->
-            <!--                 <div class="control-group"></div> -->
-            <!--             </div> -->
-
-            <!--             <h:inputText value="#{StatisticalQuestionBean.data}" id="datafield" style="display:none" /> -->
-
-
-            <!--             <div class="col-sm-7"> -->
-            <!--                 <div id="placeholder" class='flot'></div> -->
-            <!--             </div> -->
-            <!--             <div class="col-sm-5"> -->
-            <!--                 <table> -->
-            <!--                     <ui:repeat var="datarow" value="#{StatisticalQuestionBean.currentPlugin.dataList}"> -->
-            <!--                         <tr> -->
-            <!--                             <td> -->
-            <!--                                 <h:outputText value="#{datarow.label}" /> -->
-            <!--                             </td> -->
-            <!--                             <td> -->
-            <!--                                 <h:outputText value="#{datarow.data}" /> -->
-            <!--                             </td> -->
-            <!--                         </tr> -->
-            <!--                     </ui:repeat> -->
-            <!--                 </table> -->
-            <!--                 <br /> -->
-            <!--                 <h:commandLink action="#{StatisticalQuestionBean.currentPlugin.createExcelFile}" rendered="#{StatisticalQuestionBean.data != null}"> -->
-            <!--                     <h:outputText value="#{msgs.downloadExcel}" /> -->
-            <!--                 </h:commandLink> -->
-            <!--                 <br /> -->
-            <!--                 <h:commandLink action="#{StatisticalQuestionBean.currentPlugin.createPdfFile}" rendered="#{StatisticalQuestionBean.data != null}"> -->
-            <!--                     <h:outputText value="#{msgs.createPdfFile}" /> -->
-            <!--                 </h:commandLink> -->
-
-
-            <!--             </div> -->
         </h:form>
-
-
-        
-
-
 
     </composite:implementation>
 
