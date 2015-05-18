@@ -1,0 +1,210 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:composite="http://xmlns.jcp.org/jsf/composite" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:x="http://myfaces.apache.org/tomahawk" xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites" xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <composite:interface>
+    </composite:interface>
+
+    <composite:implementation>
+
+        <script src="template/js/plugins/flot/jquery.flot.js"></script>
+        <script src="template/js/plugins/flot/jquery.flot.bar.order.min.js"></script>
+        <script src="template/js/plugins/flot/jquery.flot.pie.min.js"></script>
+        <script src="template/js/plugins/flot/jquery.flot.resize.min.js"></script>
+        <script src="template/js/plugins/flot/jquery.flot.stack.js"></script>
+        <script src="template/js/plugins/flot/jquery.flot.JUMlib.js"></script>
+        <script src="template/js/plugins/flot/jquery.flot.spider.js"></script>
+
+        <h:form id="statisticplugin" rendered="#{NavigationForm.aktuell == 'a41'}" prependId="false">
+            <div class="row">
+                <div class="col-sm-12">
+                    <span>
+                        <h:outputText id="uaid2" value="#{msgs.selectProject}" />
+                    </span>
+                </div>
+
+
+
+                <div class="col-sm-12">
+                    <table>
+                        <tr>
+                            <th>
+                                <h:outputText value="#{msgs.selection}" />
+                            </th>
+                            <th style="text-align: center">
+                                <h:outputText value="#{msgs.project}" />
+                            </th>
+                            <th>
+                                <h:outputText value="#{msgs.endDate}" />
+                            </th>
+                        </tr>
+                        <ui:repeat value="#{StatisticalQuestionBean.currentPlugin.projectDataList}" var="projectData">
+                            <tr>
+                                <td>
+                                    <h:selectBooleanCheckbox value="#{projectData.selected}" />
+                                </td>
+                                <td>
+                                    <h:outputText value="#{projectData.project.titel}" />
+                                </td>
+                                <td>
+                                    <h:outputText value="#{projectData.endDate}" />
+                                </td>
+                            </tr>
+                        </ui:repeat>
+
+                    </table>
+
+                </div>
+                <div class="controls">
+                    <x:commandButton id="myStatisticButton" title="#{msgs.calculateStatistics}" value="#{msgs.calculateStatistics}" action="#{StatisticalQuestionBean.calculate}" styleClass="btn btn-primary">
+<!-- <f:ajax execute="@this" render="@this"></f:ajax> -->
+                    </x:commandButton>
+                </div>
+            </div>
+
+            <div class="row">
+                <ui:repeat value="#{StatisticalQuestionBean.currentPlugin.projectDataList}" var="projectData" varStatus="status">
+                    <h:panelGroup layout="block" rendered="#{projectData.selected}" styleClass="col-sm-4" id="element" >
+                        <h3>
+                            <h:outputText value="#{projectData.project.titel} - #{projectData.endDate}" />
+                        </h3>
+                        <br />
+                        
+                        <div id="placeholder_#{status.index}" class='flot'></div>
+
+                        <br />
+                        
+                        <table>
+                            <ui:repeat var="datarow" value="#{projectData.list}">
+                                <tr>
+                                    <td>
+                                        <h:outputText value="#{datarow.label}" />
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{datarow.data}" />
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </table>
+
+
+                            <br />
+                            <h:commandLink action="#{projectData.createExcelFile}" rendered="#{projectData.data != null}">
+                                <h:outputText value="#{msgs.downloadExcel}" />
+                            </h:commandLink>
+                            <br />
+                            <h:commandLink action="#{projectData.createPdfFile}" rendered="#{projectData.data != null}">
+                                <h:outputText value="#{msgs.createPdfFile}" />
+                            </h:commandLink>
+
+                        <div id="datafield_#{status.index}">
+                            <h:inputText value="#{projectData.data}" styleClass="rawdata" style="display:none" />
+                        </div>
+
+                        <script type="text/javascript">
+                        	$( document ).ready( function() {
+                        		
+                                    function plotTable() {
+                                    	var element = $("#datafield_#{status.index} input");
+                                        var data = $.parseJSON( element.val() );
+                                        function plotWithOptions() {
+
+                                            $.plot('#placeholder_#{status.index}', data, {
+                                                series : {
+                                                    pie : {
+                                                        show : true,
+                                                        label : {
+                                                            show : false
+                                                        }
+                                                    }
+                                                },
+                                                grid : {
+                                                    hoverable : true,
+                                                    clickable : true
+                                                }
+                                            });
+
+                                        }
+                                        plotWithOptions();
+                                    }
+
+                                    $("#placeholder_#{status.index}")
+                                            .on('plotclick',
+                                                    function(e, pos, obj) {
+                                                        var div = '<div class="chart-info">'
+                                                                + obj.series.label
+                                                                + ': '
+                                                                + obj.series.data[0][1]
+                                                                + '</div>';
+                                                        if ($('.chart-info').length > 0) {
+                                                            $('.chart-info')
+                                                                    .remove();
+                                                        }
+                                                        $('body').append(div);
+                                                        $('.chart-info')
+                                                                .hide()
+                                                                .css(
+                                                                        {
+                                                                            'position' : 'absolute',
+                                                                            'top' : pos.pageY,
+                                                                            'left' : pos.pageX
+                                                                        })
+                                                                .show();
+                                                    });
+                                    
+                                    plotTable();
+                        		
+                        	} );
+                                </script>
+                    </h:panelGroup>
+
+                </ui:repeat>
+
+
+            </div>
+
+
+            <!--             <div class="row"> -->
+            <!--                 <div class="control-group"></div> -->
+            <!--             </div> -->
+
+            <!--             <h:inputText value="#{StatisticalQuestionBean.data}" id="datafield" style="display:none" /> -->
+
+
+            <!--             <div class="col-sm-7"> -->
+            <!--                 <div id="placeholder" class='flot'></div> -->
+            <!--             </div> -->
+            <!--             <div class="col-sm-5"> -->
+            <!--                 <table> -->
+            <!--                     <ui:repeat var="datarow" value="#{StatisticalQuestionBean.currentPlugin.dataList}"> -->
+            <!--                         <tr> -->
+            <!--                             <td> -->
+            <!--                                 <h:outputText value="#{datarow.label}" /> -->
+            <!--                             </td> -->
+            <!--                             <td> -->
+            <!--                                 <h:outputText value="#{datarow.data}" /> -->
+            <!--                             </td> -->
+            <!--                         </tr> -->
+            <!--                     </ui:repeat> -->
+            <!--                 </table> -->
+            <!--                 <br /> -->
+            <!--                 <h:commandLink action="#{StatisticalQuestionBean.currentPlugin.createExcelFile}" rendered="#{StatisticalQuestionBean.data != null}"> -->
+            <!--                     <h:outputText value="#{msgs.downloadExcel}" /> -->
+            <!--                 </h:commandLink> -->
+            <!--                 <br /> -->
+            <!--                 <h:commandLink action="#{StatisticalQuestionBean.currentPlugin.createPdfFile}" rendered="#{StatisticalQuestionBean.data != null}"> -->
+            <!--                     <h:outputText value="#{msgs.createPdfFile}" /> -->
+            <!--                 </h:commandLink> -->
+
+
+            <!--             </div> -->
+        </h:form>
+
+
+        
+
+
+
+    </composite:implementation>
+
+</ui:composition>
+
+

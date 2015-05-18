@@ -1,0 +1,247 @@
+package de.intranda.goobi.plugins.util;
+
+import java.awt.Color;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
+
+import net.sf.jxls.exception.ParsePropertyException;
+import net.sf.jxls.transformer.XLSTransformer;
+
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.goobi.beans.Project;
+import org.goobi.beans.Step;
+import org.goobi.production.flow.statistics.hibernate.FilterHelper;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.ColumnText;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStamper;
+
+import de.intranda.goobi.plugins.OpenStepProjectPlugin;
+import de.sub.goobi.helper.FacesContextHelper;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.persistence.managers.StepManager;
+
+public class ProjectData {
+    private static final Logger logger = Logger.getLogger(OpenStepProjectPlugin.class);
+
+    private boolean selected = false;
+
+    private Project project;
+
+    private List<PieType> list;
+    private String data;
+
+    private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/template.xls";
+
+    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/GoobiControllingTemplate.pdf";
+    
+    
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public void calculate() {
+
+        String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);
+        List<Step> stepList = null;
+
+        stepList =
+                StepManager.getSteps(null,
+                        " (bearbeitungsstatus != 3) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
+                                + filterString + ")");
+
+        Map<String, Integer> counter = new TreeMap<String, Integer>();
+
+        for (Step step : stepList) {
+            if (counter.containsKey(step.getTitel())) {
+                counter.put(step.getTitel(), counter.get(step.getTitel()) + 1);
+            } else {
+                counter.put(step.getTitel(), 1);
+            }
+
+        }
+
+        list = new ArrayList<PieType>();
+
+        for (String stepName : counter.keySet()) {
+            int value = counter.get(stepName);
+            PieType type = new PieType();
+            type.setLabel(stepName);
+            type.setData(value);
+            type.setColor(OpenStepProjectPlugin.getRandomColor());
+            list.add(type);
+        }
+
+        StringWriter writer = new StringWriter();
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            mapper.writeValue(writer, list);
+        } catch (IOException e) {
+            logger.error(e);
+        }
+
+        data = writer.toString();
+
+    }
+
+    public List<PieType> getList() {
+        return list;
+    }
+
+    public void setList(List<PieType> list) {
+        this.list = list;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public void createExcelFile() {
+              try {
+                  File tempFile = File.createTempFile("test", ".xls");
+        
+                  Map<String, List<PieType>> map = new HashMap<>();
+                  map.put("groups", list);
+        
+                  XLSTransformer transformer = new XLSTransformer();
+                  transformer.markAsFixedSizeCollection("groups");
+        
+                  transformer.transformXLS(XLS_TEMPLATE_NAME, map, tempFile.getAbsolutePath());
+        
+                  if (tempFile.exists()) {
+                      FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
+        
+                      HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+                      OutputStream out = response.getOutputStream();
+                      response.setContentType("application/vnd.ms-excel");
+                      response.setHeader("Content-Disposition", "attachment;filename=\"export.xls\"");
+                      byte[] buf = new byte[8192];
+        
+                      InputStream is = new FileInputStream(tempFile);
+        
+                      int c = 0;
+        
+                      while ((c = is.read(buf, 0, buf.length)) > 0) {
+                          out.write(buf, 0, c);
+                          out.flush();
+                      }
+        
+                      out.flush();
+                      is.close();
+                      facesContext.responseComplete();
+        
+                      tempFile.delete();
+        
+                  }
+        
+              } catch (ParsePropertyException | InvalidFormatException | IOException e) {
+                  logger.error(e);
+              }
+
+    }
+
+    public void createPdfFile() {
+              try {
+                  FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
+        
+                  HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+                  OutputStream out = response.getOutputStream();
+                  response.setContentType("application/pdf");
+                  response.setHeader("Content-Disposition", "attachment;filename=\"export.pdf\"");
+        
+                  PdfPTable table = new PdfPTable(2);
+        
+                  table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+                  table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+        
+                  PdfPCell cell1 = new PdfPCell();
+                  cell1.setBackgroundColor(Color.blue);
+                  cell1.addElement(new Paragraph(Helper.getTranslation("userGroup")));
+                  cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        
+                  PdfPCell cell2 = new PdfPCell();
+                  cell2.setBackgroundColor(Color.yellow);
+                  cell2.addElement(new Paragraph(Helper.getTranslation("count")));
+                  cell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+        
+                  table.addCell(cell1);
+                  table.addCell(cell2);
+        
+                  for (PieType pt : list) {
+                      table.addCell(pt.getLabel());
+                      table.addCell("" + pt.getData());
+                  }
+        
+                  PdfReader pdfReader = new PdfReader(PDF_TEMPLATE_NAME);
+                  PdfStamper pdfStamper = new PdfStamper(pdfReader, out);
+        
+                  PdfImportedPage page = pdfStamper.getImportedPage(pdfReader, 1);
+        
+                  PdfContentByte content = pdfStamper.getOverContent(1);
+                  content.addTemplate(page, 0, 0);
+        
+                  table.setHeaderRows(1);
+                  table.setTotalWidth(500);
+        
+                  Paragraph p = new Paragraph("Nutzergruppen");
+                  ColumnText.showTextAligned(content, Element.ALIGN_CENTER, p, 70, 760, 0);
+        
+                  table.writeSelectedRows(0, -1, 30, 750, content);
+        
+                  pdfStamper.close();
+                  pdfReader.close();
+                  out.flush();
+                  facesContext.responseComplete();
+              } catch (IOException | DocumentException e) {
+                  logger.error(e);
+              }
+    }
+
+    public String getEndDate() {
+        if (project.getEndDate() != null) {
+            return DateFormat.getDateInstance().format(project.getEndDate());
+        } else {
+            return "";
+        }
+    }
+}
