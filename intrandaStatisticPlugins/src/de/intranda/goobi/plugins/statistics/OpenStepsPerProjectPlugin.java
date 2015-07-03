@@ -53,7 +53,7 @@ public class OpenStepsPerProjectPlugin extends AbstractStatisticsPlugin implemen
 
     @Override
     public String getGui() {
-        return "/uii/statistics_opensteps.xhtml";
+        return "/uii/statistics_openStepsPerProject.xhtml";
     }
 
     @Override

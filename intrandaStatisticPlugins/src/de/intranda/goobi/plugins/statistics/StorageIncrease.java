@@ -93,7 +93,7 @@ public class StorageIncrease extends AbstractStatisticsPlugin implements IStatis
     }
 
     public String getGui() {
-        return "/uii/statistics_storage_increase.xhtml";
+        return "/uii/statistics_storageIncrease.xhtml";
     }
 
     public static double round(double value, int places) {

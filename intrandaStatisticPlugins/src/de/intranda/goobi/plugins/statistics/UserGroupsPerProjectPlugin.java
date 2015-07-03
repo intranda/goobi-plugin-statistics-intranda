@@ -57,7 +57,7 @@ public class UserGroupsPerProjectPlugin extends AbstractStatisticsPlugin impleme
 
     @Override
     public String getGui() {
-        return "/uii/statistics_opensteps.xhtml";
+        return "/uii/statistics_openStepsPerProject.xhtml";
     }
 
     @Override
