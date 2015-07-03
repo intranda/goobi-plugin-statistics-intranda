@@ -28,7 +28,18 @@
 
 
 </style>
-        <h:form id="statisticplugin" rendered="#{NavigationForm.aktuell == 'a41'}">
+		<div class="row">
+            <div class="col-sm-12">
+                <div class="box box-color lightgrey box-bordered">
+                    <div class="box-title">
+                        <h3>
+                             <i class="fa fa-pie-chart"></i>
+                            <h:outputText value="#{msgs[StatisticalQuestionBean.currentPlugin.title]}" />
+                        </h3>
+                    </div>
+                    <div class="box-content">
+                    
+                            <h:form id="statisticplugin" rendered="#{NavigationForm.aktuell == 'a41'}">
             <div class="row">
                 <div class="col-sm-12">
                     <span>
@@ -138,6 +149,12 @@
 										}
 									});
 								</script>
+								
+								 </div>
+	            </div>
+	        </div>
+	    </div>
+	    
     </composite:implementation>
 
 </ui:composition>
