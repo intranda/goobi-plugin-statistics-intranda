@@ -76,10 +76,10 @@
                             <ui:repeat var="datarow" value="#{projectData.list}">
                                 <tr>
                                     <td>
-                                        <h:outputText value="#{datarow.label}" />
+                                        <h:outputText value="#{datarow.label}" style="color:#{datarow.color}"/>
                                     </td>
                                     <td>
-                                        <h:outputText value="#{datarow.data}" />
+                                        <h:outputText value="#{datarow.data}" style="color:#{datarow.color}"/>
                                     </td>
                                 </tr>
                             </ui:repeat>
@@ -102,7 +102,7 @@
                         <script type="text/javascript">
                         	$( document ).ready( function() {
                         		
-                                    function plotTable() {
+                                    function plot() {
                                     	var element = $("#datafield_#{status.index} input");
                                         var data = $.parseJSON( element.val() );
                                         function plotWithOptions() {
@@ -119,6 +119,9 @@
                                                 grid : {
                                                     hoverable : true,
                                                     clickable : true
+                                                },
+                                                legend: {
+                                                    show: false
                                                 }
                                             });
 
@@ -150,7 +153,7 @@
                                                                 .show();
                                                     });
                                     
-                                    plotTable();
+                                    plot();
                                     
                         		
                         	} );

@@ -1,4 +1,4 @@
-package de.intranda.goobi.plugins.util;
+package de.intranda.goobi.plugins.statistics.util;
 
 public class PieType {
 

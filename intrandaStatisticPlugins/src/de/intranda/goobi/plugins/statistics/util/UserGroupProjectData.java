@@ -1,4 +1,4 @@
-package de.intranda.goobi.plugins;
+package de.intranda.goobi.plugins.statistics.util;
 
 import java.awt.Color;
 import java.io.File;
@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,15 +19,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jxls.exception.ParsePropertyException;
 import net.sf.jxls.transformer.XLSTransformer;
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.goobi.beans.Project;
 import org.goobi.beans.Step;
 import org.goobi.beans.Usergroup;
 import org.goobi.production.flow.statistics.hibernate.FilterHelper;
-import org.goobi.production.plugin.interfaces.AbstractStatisticsPlugin;
-import org.goobi.production.plugin.interfaces.IStatisticPlugin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.DocumentException;
@@ -42,30 +40,46 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 
-import de.intranda.goobi.plugins.util.PieType;
+import de.intranda.goobi.PluginInfo;
+import de.intranda.goobi.plugins.statistics.util.PieType;
 import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.StepManager;
 import de.sub.goobi.persistence.managers.UsergroupManager;
 
-@PluginImplementation
-public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatisticPlugin {
+public class UserGroupProjectData {
 
-    private static final String PLUGIN_TITLE = "UserGroupPlugin";
+    private static final Logger logger = Logger.getLogger(UserGroupProjectData.class);
 
-    private static final Logger logger = Logger.getLogger(UserGroupPlugin.class);
+    private boolean selected = false;
+
+    private Project project;
+
+    private List<PieType> list;
+    private String data;
 
     private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/template.xls";
 
     private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/GoobiControllingTemplate.pdf";
 
-    private List<PieType> list;
+    public boolean isSelected() {
+        return selected;
+    }
 
-    private String data;
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 
-    @Override
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
     public void calculate() {
-        String filterString = FilterHelper.criteriaBuilder(filter, false, null, null, null, true, false);
+        String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);
         List<Step> stepList = null;
         if (filterString == null || filterString.length() == 0) {
             stepList = StepManager.getSteps(null, " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2)  ");
@@ -97,7 +111,7 @@ public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatis
             PieType type = new PieType();
             type.setLabel(groupName);
             type.setData(value);
-            type.setColor(getRandomColor());
+            type.setColor(PluginInfo.getRandomColor());
             list.add(type);
 
         }
@@ -115,42 +129,12 @@ public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatis
 
     }
 
-    private static String getRandomColor() {
-        String possibleValues = "0123456789ABCDEF";
-        String hexCode = "#";
-        for (int i = 0; i <= 5; i++) {
-            int index = (int) (Math.random() * 15);
-            hexCode += possibleValues.charAt(index);
-        }
-        return hexCode;
-    }
-
-    @Override
-    public String getTitle() {
-        return PLUGIN_TITLE;
-    }
-
     public String getData() {
         return data;
     }
 
     public void setData(String data) {
         this.data = data;
-    }
-
-    @Override
-    public String getGui() {
-        return "/uii/usergroup_statistics.xhtml";
-    }
-
-    @Override
-    public void setStartDate(Date date) {
-
-    }
-
-    @Override
-    public void setEndDate(Date date) {
-
     }
 
     public void setDataList(List<PieType> list) {
@@ -160,6 +144,16 @@ public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatis
     public List<PieType> getDataList() {
         return list;
     }
+    
+    public List<PieType> getList() {
+        return list;
+    }
+
+    public void setList(List<PieType> list) {
+        this.list = list;
+    }
+
+
 
     public void createExcelFile() {
         try {
@@ -262,4 +256,11 @@ public class UserGroupPlugin extends AbstractStatisticsPlugin implements IStatis
         }
     }
 
+    public String getEndDate() {
+        if (project.getEndDate() != null) {
+            return DateFormat.getDateInstance().format(project.getEndDate());
+        } else {
+            return "";
+        }
+    }
 }

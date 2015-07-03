@@ -47,7 +47,7 @@
                     <ui:repeat var="datarow" value="#{StatisticalQuestionBean.currentPlugin.dataList}">
                         <tr>
                             <td>
-                                <h:outputText value="#{datarow.label}" />
+                                <h:outputText value="#{datarow.label} - #{datarow.color}" style="color:#{datarow.color}" />
                             </td>
                             <td>
                                 <h:outputText value="#{datarow.data}" />

@@ -1,4 +1,4 @@
-package de.intranda.goobi.plugins;
+package de.intranda.goobi.plugins.statistics;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,27 +11,23 @@ import org.goobi.beans.Project;
 import org.goobi.production.plugin.interfaces.AbstractStatisticsPlugin;
 import org.goobi.production.plugin.interfaces.IStatisticPlugin;
 
-import de.intranda.goobi.plugins.util.UserGroupProjectData;
+import de.intranda.goobi.plugins.statistics.util.ProjectData;
 import de.sub.goobi.persistence.managers.ProjectManager;
 
 @PluginImplementation
-public class UserGroupProjectPlugin extends AbstractStatisticsPlugin implements IStatisticPlugin {
+public class OpenStepsPerProjectPlugin extends AbstractStatisticsPlugin implements IStatisticPlugin {
 
-    private static final String PLUGIN_TITLE = "UserGroupProjectPlugin";
+    private static final String PLUGIN_TITLE = "intranda_statistics_openStepsPerProject";
 
-    private static final Logger logger = Logger.getLogger(UserGroupProjectPlugin.class);
+    private static final Logger logger = Logger.getLogger(OpenStepsPerProjectPlugin.class);
 
-    //    private List<PieType> list;
-    //
-    //    private String data;
-
-    private List<UserGroupProjectData> projectDataList = new ArrayList<UserGroupProjectData>();
+    private List<ProjectData> projectDataList = new ArrayList<ProjectData>();
 
     public void initProjectData() {
         List<Project> projectList = ProjectManager.getAllProjects();
 
         for (Project project : projectList) {
-            UserGroupProjectData pd = new UserGroupProjectData();
+            ProjectData pd = new ProjectData();
             pd.setProject(project);
             projectDataList.add(pd);
         }
@@ -40,12 +36,12 @@ public class UserGroupProjectPlugin extends AbstractStatisticsPlugin implements 
     @Override
     public void calculate() {
 
-        for (UserGroupProjectData pd : projectDataList) {
+        for (ProjectData pd : projectDataList) {
             if (pd.isSelected()) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Calculating data for project " + pd.getProject().getTitel());
                 }
-                pd.calculate();
+                pd.calculateOpenSteps();
             }
         }
     }
@@ -57,7 +53,7 @@ public class UserGroupProjectPlugin extends AbstractStatisticsPlugin implements 
 
     @Override
     public String getGui() {
-        return "/uii/opensteps_statistics.xhtml";
+        return "/uii/statistics_opensteps.xhtml";
     }
 
     @Override
@@ -70,14 +66,14 @@ public class UserGroupProjectPlugin extends AbstractStatisticsPlugin implements 
 
     }
 
-    public List<UserGroupProjectData> getProjectDataList() {
+    public List<ProjectData> getProjectDataList() {
         if (projectDataList.isEmpty()) {
             initProjectData();
         }
         return projectDataList;
     }
 
-    public void setProjectDataList(List<UserGroupProjectData> projectDataList) {
+    public void setProjectDataList(List<ProjectData> projectDataList) {
         this.projectDataList = projectDataList;
     }
 

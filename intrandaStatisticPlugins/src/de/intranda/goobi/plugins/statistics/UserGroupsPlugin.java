@@ -1,4 +1,4 @@
-package de.intranda.goobi.plugins.util;
+package de.intranda.goobi.plugins.statistics;
 
 import java.awt.Color;
 import java.io.File;
@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,13 +19,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jxls.exception.ParsePropertyException;
 import net.sf.jxls.transformer.XLSTransformer;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.goobi.beans.Project;
 import org.goobi.beans.Step;
 import org.goobi.beans.Usergroup;
 import org.goobi.production.flow.statistics.hibernate.FilterHelper;
+import org.goobi.production.plugin.interfaces.AbstractStatisticsPlugin;
+import org.goobi.production.plugin.interfaces.IStatisticPlugin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.DocumentException;
@@ -40,72 +42,65 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 
-import de.intranda.goobi.PluginInfo;
-import de.intranda.goobi.plugins.OpenStepProjectPlugin;
+import de.intranda.goobi.plugins.statistics.util.PieType;
 import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.StepManager;
 import de.sub.goobi.persistence.managers.UsergroupManager;
 
-public class ProjectData {
-    private static final Logger logger = Logger.getLogger(OpenStepProjectPlugin.class);
+@PluginImplementation
+public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStatisticPlugin {
 
-    private boolean selected = false;
+	private static final String PLUGIN_TITLE = "intranda_statistics_userGroups";
 
-    private Project project;
 
-    private List<PieType> list;
-    private String data;
+    private static final Logger logger = Logger.getLogger(UserGroupsPlugin.class);
 
     private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/template.xls";
 
     private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/GoobiControllingTemplate.pdf";
 
-    public boolean isSelected() {
-        return selected;
-    }
+    private List<PieType> list;
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
+    private String data;
 
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    public void calculateOpenSteps() {
-
-        String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);
+    @Override
+    public void calculate() {
+        String filterString = FilterHelper.criteriaBuilder(filter, false, null, null, null, true, false);
         List<Step> stepList = null;
-
-        stepList =
-                StepManager.getSteps(null, " (bearbeitungsstatus != 3) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
-                        + filterString + ")");
+        if (filterString == null || filterString.length() == 0) {
+            stepList = StepManager.getSteps(null, " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2)  ");
+        } else {
+            stepList =
+                    StepManager.getSteps(null,
+                            " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
+                                    + filterString + ")");
+        }
 
         Map<String, Integer> counter = new TreeMap<String, Integer>();
 
         for (Step step : stepList) {
-            if (counter.containsKey(step.getTitel())) {
-                counter.put(step.getTitel(), counter.get(step.getTitel()) + 1);
-            } else {
-                counter.put(step.getTitel(), 1);
-            }
+            for (Usergroup group : UsergroupManager.getUserGroupsForStep(step.getId())) {
 
+                if (counter.containsKey(group.getTitel())) {
+                    counter.put(group.getTitel(), counter.get(group.getTitel()) + 1);
+                } else {
+                    counter.put(group.getTitel(), 1);
+                }
+            }
         }
 
         list = new ArrayList<PieType>();
 
-        for (String stepName : counter.keySet()) {
-            int value = counter.get(stepName);
+        for (String groupName : counter.keySet()) {
+            int value = counter.get(groupName);
+
             PieType type = new PieType();
-            type.setLabel(stepName);
+            type.setLabel(groupName);
             type.setData(value);
-            type.setColor(PluginInfo.getRandomColor());
+            type.setColor(getRandomColor());
             list.add(type);
+
         }
 
         StringWriter writer = new StringWriter();
@@ -121,66 +116,19 @@ public class ProjectData {
 
     }
 
-    
-//    public void calculateUserGroupAssignment() {
-//        
-//        String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);
-//        List<Step> stepList = null;
-//        if (filterString == null || filterString.length() == 0) {
-//            stepList = StepManager.getSteps(null, " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2)  ");
-//        } else {
-//            stepList =
-//                    StepManager.getSteps(null,
-//                            " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
-//                                    + filterString + ")");
-//        }
-//
-//        Map<String, Integer> counter = new TreeMap<String, Integer>();
-//
-//        for (Step step : stepList) {
-//            for (Usergroup group : UsergroupManager.getUserGroupsForStep(step.getId())) {
-//
-//                if (counter.containsKey(group.getTitel())) {
-//                    counter.put(group.getTitel(), counter.get(group.getTitel()) + 1);
-//                } else {
-//                    counter.put(group.getTitel(), 1);
-//                }
-//            }
-//        }
-//
-//        list = new ArrayList<PieType>();
-//
-//        for (String groupName : counter.keySet()) {
-//            int value = counter.get(groupName);
-//
-//            PieType type = new PieType();
-//            type.setLabel(groupName);
-//            type.setData(value);
-//            type.setColor(PluginInfo.getRandomColor());
-//            list.add(type);
-//
-//        }
-//
-//        StringWriter writer = new StringWriter();
-//        ObjectMapper mapper = new ObjectMapper();
-//
-//        try {
-//            mapper.writeValue(writer, list);
-//        } catch (IOException e) {
-//            logger.error(e);
-//        }
-//
-//        data = writer.toString();
-//        
-//    }
-    
-    
-    public List<PieType> getList() {
-        return list;
+    private static String getRandomColor() {
+        String possibleValues = "0123456789ABCDEF";
+        String hexCode = "#";
+        for (int i = 0; i <= 5; i++) {
+            int index = (int) (Math.random() * 15);
+            hexCode += possibleValues.charAt(index);
+        }
+        return hexCode;
     }
 
-    public void setList(List<PieType> list) {
-        this.list = list;
+    @Override
+    public String getTitle() {
+        return PLUGIN_TITLE;
     }
 
     public String getData() {
@@ -189,6 +137,29 @@ public class ProjectData {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    @Override
+    public String getGui() {
+        return "/uii/statistics_usergroups.xhtml";
+    }
+
+    @Override
+    public void setStartDate(Date date) {
+
+    }
+
+    @Override
+    public void setEndDate(Date date) {
+
+    }
+
+    public void setDataList(List<PieType> list) {
+        this.list = list;
+    }
+
+    public List<PieType> getDataList() {
+        return list;
     }
 
     public void createExcelFile() {
@@ -246,7 +217,7 @@ public class ProjectData {
 
             PdfPTable table = new PdfPTable(2);
 
-            table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+            table.getDefaultCell().setBorder(Rectangle.BOX);
             table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
 
             PdfPCell cell1 = new PdfPCell();
@@ -292,11 +263,4 @@ public class ProjectData {
         }
     }
 
-    public String getEndDate() {
-        if (project.getEndDate() != null) {
-            return DateFormat.getDateInstance().format(project.getEndDate());
-        } else {
-            return "";
-        }
-    }
 }

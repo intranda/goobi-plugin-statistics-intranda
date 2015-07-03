@@ -1,4 +1,4 @@
-package de.intranda.goobi.plugins.util;
+package de.intranda.goobi.plugins.statistics.util;
 
 import java.awt.Color;
 import java.io.File;
@@ -41,15 +41,14 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 
 import de.intranda.goobi.PluginInfo;
-import de.intranda.goobi.plugins.util.PieType;
+import de.intranda.goobi.plugins.statistics.OpenStepsPerProjectPlugin;
 import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.StepManager;
 import de.sub.goobi.persistence.managers.UsergroupManager;
 
-public class UserGroupProjectData {
-
-    private static final Logger logger = Logger.getLogger(UserGroupProjectData.class);
+public class ProjectData {
+    private static final Logger logger = Logger.getLogger(OpenStepsPerProjectPlugin.class);
 
     private boolean selected = false;
 
@@ -78,42 +77,35 @@ public class UserGroupProjectData {
         this.project = project;
     }
 
-    public void calculate() {
+    public void calculateOpenSteps() {
+
         String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);
         List<Step> stepList = null;
-        if (filterString == null || filterString.length() == 0) {
-            stepList = StepManager.getSteps(null, " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2)  ");
-        } else {
-            stepList =
-                    StepManager.getSteps(null,
-                            " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
-                                    + filterString + ")");
-        }
+
+        stepList =
+                StepManager.getSteps(null, " (bearbeitungsstatus != 3) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
+                        + filterString + ")");
 
         Map<String, Integer> counter = new TreeMap<String, Integer>();
 
         for (Step step : stepList) {
-            for (Usergroup group : UsergroupManager.getUserGroupsForStep(step.getId())) {
-
-                if (counter.containsKey(group.getTitel())) {
-                    counter.put(group.getTitel(), counter.get(group.getTitel()) + 1);
-                } else {
-                    counter.put(group.getTitel(), 1);
-                }
+            if (counter.containsKey(step.getTitel())) {
+                counter.put(step.getTitel(), counter.get(step.getTitel()) + 1);
+            } else {
+                counter.put(step.getTitel(), 1);
             }
+
         }
 
         list = new ArrayList<PieType>();
 
-        for (String groupName : counter.keySet()) {
-            int value = counter.get(groupName);
-
+        for (String stepName : counter.keySet()) {
+            int value = counter.get(stepName);
             PieType type = new PieType();
-            type.setLabel(groupName);
+            type.setLabel(stepName);
             type.setData(value);
             type.setColor(PluginInfo.getRandomColor());
             list.add(type);
-
         }
 
         StringWriter writer = new StringWriter();
@@ -129,21 +121,59 @@ public class UserGroupProjectData {
 
     }
 
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    public void setDataList(List<PieType> list) {
-        this.list = list;
-    }
-
-    public List<PieType> getDataList() {
-        return list;
-    }
+    
+//    public void calculateUserGroupAssignment() {
+//        
+//        String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);
+//        List<Step> stepList = null;
+//        if (filterString == null || filterString.length() == 0) {
+//            stepList = StepManager.getSteps(null, " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2)  ");
+//        } else {
+//            stepList =
+//                    StepManager.getSteps(null,
+//                            " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
+//                                    + filterString + ")");
+//        }
+//
+//        Map<String, Integer> counter = new TreeMap<String, Integer>();
+//
+//        for (Step step : stepList) {
+//            for (Usergroup group : UsergroupManager.getUserGroupsForStep(step.getId())) {
+//
+//                if (counter.containsKey(group.getTitel())) {
+//                    counter.put(group.getTitel(), counter.get(group.getTitel()) + 1);
+//                } else {
+//                    counter.put(group.getTitel(), 1);
+//                }
+//            }
+//        }
+//
+//        list = new ArrayList<PieType>();
+//
+//        for (String groupName : counter.keySet()) {
+//            int value = counter.get(groupName);
+//
+//            PieType type = new PieType();
+//            type.setLabel(groupName);
+//            type.setData(value);
+//            type.setColor(PluginInfo.getRandomColor());
+//            list.add(type);
+//
+//        }
+//
+//        StringWriter writer = new StringWriter();
+//        ObjectMapper mapper = new ObjectMapper();
+//
+//        try {
+//            mapper.writeValue(writer, list);
+//        } catch (IOException e) {
+//            logger.error(e);
+//        }
+//
+//        data = writer.toString();
+//        
+//    }
+    
     
     public List<PieType> getList() {
         return list;
@@ -153,7 +183,13 @@ public class UserGroupProjectData {
         this.list = list;
     }
 
+    public String getData() {
+        return data;
+    }
 
+    public void setData(String data) {
+        this.data = data;
+    }
 
     public void createExcelFile() {
         try {

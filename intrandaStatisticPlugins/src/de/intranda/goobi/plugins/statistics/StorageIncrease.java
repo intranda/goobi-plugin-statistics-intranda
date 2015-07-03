@@ -1,4 +1,4 @@
-package de.intranda.goobi.plugins;
+package de.intranda.goobi.plugins.statistics;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -17,8 +17,15 @@ import org.goobi.production.plugin.interfaces.IStatisticPlugin;
 import de.sub.goobi.persistence.managers.ProcessManager;
 
 @PluginImplementation
-public class TestPlugin extends AbstractStatisticsPlugin implements IStatisticPlugin {
+public class StorageIncrease extends AbstractStatisticsPlugin implements IStatisticPlugin {
 
+	private static final String PLUGIN_TITLE = "intranda_statistics_storageIncrease";
+	
+    @Override
+    public String getTitle() {
+        return PLUGIN_TITLE;
+    }
+    
     private Date startDate;
 
     private Date endDate;
@@ -26,11 +33,6 @@ public class TestPlugin extends AbstractStatisticsPlugin implements IStatisticPl
     private TimeUnit targetTimeUnit;
 
     private CalculationUnit targetCalculationUnit;
-
-    @Override
-    public String getTitle() {
-        return "TestPlugin1";
-    }
 
     private String data;
 
@@ -91,7 +93,7 @@ public class TestPlugin extends AbstractStatisticsPlugin implements IStatisticPl
     }
 
     public String getGui() {
-        return "/uii/storage.xhtml";
+        return "/uii/statistics_storage_increase.xhtml";
     }
 
     public static double round(double value, int places) {
