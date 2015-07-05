@@ -39,7 +39,7 @@
 									styleClass="btn btn-primary">
 									<f:ajax execute="@form" render="@form"></f:ajax>
 								</x:commandButton>
-								<div id="placeholder" class='flot'></div>
+								<div id="placeholder" class='flot' style="min-height: 450px;"></div>
 							</div>
 
 							<div class="col-sm-5">
@@ -47,7 +47,7 @@
 									<ui:repeat var="datarow" value="#{StatisticalQuestionBean.currentPlugin.dataList}">
 										<tr>
 											<td><i class="fa fa-square" style="color:#{datarow.color}"></i></td>
-											<td><h:outputText value="#{datarow.label}" style="color:#{datarow.color}" /></td>
+											<td><h:outputText value="#{datarow.label}" /></td>
 											<td><h:outputText value="#{datarow.data}" /></td>
 										</tr>
 									</ui:repeat>
@@ -83,8 +83,10 @@
 						series : {
 							pie : {
 								show : true,
+								radius : 170,
+								innerRadius : 100,
 								label : {
-									show : true,
+									show : true
 								}
 							}
 						},
