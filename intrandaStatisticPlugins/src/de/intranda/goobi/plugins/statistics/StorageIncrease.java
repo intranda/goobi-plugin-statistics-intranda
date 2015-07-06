@@ -77,7 +77,6 @@ public class StorageIncrease extends AbstractStatisticsPlugin implements IStatis
                     rawData.append(", ");
                     rawAxis.append(", ");
                 }
-                System.out.println(key + ": " + d);
 
                 //                row.put(i++, new Converter(objArr[0]).getGB());
 
