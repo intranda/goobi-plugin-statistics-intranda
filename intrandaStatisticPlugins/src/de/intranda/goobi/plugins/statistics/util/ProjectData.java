@@ -57,9 +57,9 @@ public class ProjectData {
     private List<PieType> list;
     private String data;
 
-    private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/template.xls";
+    private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xls";
 
-    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/GoobiControllingTemplate.pdf";
+    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
 
     public boolean isSelected() {
         return selected;

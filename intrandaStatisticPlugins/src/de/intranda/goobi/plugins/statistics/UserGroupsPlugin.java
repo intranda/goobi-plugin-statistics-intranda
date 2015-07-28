@@ -56,9 +56,9 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
 
     private static final Logger logger = Logger.getLogger(UserGroupsPlugin.class);
 
-    private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/template.xls";
+    private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xls";
 
-    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/GoobiControllingTemplate.pdf";
+    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
 
     private List<PieType> list;
 
