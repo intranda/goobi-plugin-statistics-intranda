@@ -155,4 +155,10 @@ public class StorageIncrease extends AbstractStatisticsPlugin implements IStatis
         endDate = date;
     }
 
+    @Override
+    public boolean getPermissions() {
+        //darf niemand sehen
+        return false;
+    }
+
 }

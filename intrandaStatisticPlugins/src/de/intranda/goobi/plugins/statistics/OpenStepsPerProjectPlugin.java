@@ -79,8 +79,13 @@ public class OpenStepsPerProjectPlugin extends AbstractStatisticsPlugin implemen
 
     @Override
     public String getData() {
-        // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public boolean getPermissions() {
+        // darf jeder sehen
+        return true;
     }
 
 }

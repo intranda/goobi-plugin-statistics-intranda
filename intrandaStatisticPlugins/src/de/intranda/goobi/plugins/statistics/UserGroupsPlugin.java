@@ -24,6 +24,7 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.goobi.beans.Step;
+import org.goobi.beans.User;
 import org.goobi.beans.Usergroup;
 import org.goobi.production.flow.statistics.hibernate.FilterHelper;
 import org.goobi.production.plugin.interfaces.AbstractStatisticsPlugin;
@@ -261,6 +262,14 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
         } catch (IOException | DocumentException e) {
             logger.error(e);
         }
+    }
+
+    @Override
+    public boolean getPermissions() {
+        // Nur bestimmte Nutzer
+        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+        
+        return user.getLogin().equals("testadmin");
     }
 
 }

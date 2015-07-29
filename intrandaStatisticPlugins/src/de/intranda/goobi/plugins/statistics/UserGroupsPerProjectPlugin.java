@@ -8,16 +8,18 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.apache.log4j.Logger;
 import org.goobi.beans.Project;
+import org.goobi.managedbeans.LoginBean;
 import org.goobi.production.plugin.interfaces.AbstractStatisticsPlugin;
 import org.goobi.production.plugin.interfaces.IStatisticPlugin;
 
 import de.intranda.goobi.plugins.statistics.util.UserGroupProjectData;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.ProjectManager;
 
 @PluginImplementation
 public class UserGroupsPerProjectPlugin extends AbstractStatisticsPlugin implements IStatisticPlugin {
 
-	private static final String PLUGIN_TITLE = "intranda_statistics_userGroupsPerProject";
+    private static final String PLUGIN_TITLE = "intranda_statistics_userGroupsPerProject";
 
     private static final Logger logger = Logger.getLogger(UserGroupsPerProjectPlugin.class);
 
@@ -85,6 +87,13 @@ public class UserGroupsPerProjectPlugin extends AbstractStatisticsPlugin impleme
     public String getData() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public boolean getPermissions() {
+        // nur mit admin Rechten 
+        LoginBean bean = (LoginBean) Helper.getManagedBeanValue("#{LoginForm}");
+        return (bean.getMaximaleBerechtigung() == 1);
     }
 
 }
