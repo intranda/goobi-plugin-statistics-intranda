@@ -7,6 +7,8 @@ import java.util.List;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
+import org.goobi.beans.User;
+import org.goobi.beans.Usergroup;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.goobi.production.flow.statistics.hibernate.Converter;
@@ -14,18 +16,19 @@ import org.goobi.production.flow.statistics.hibernate.SQLStorage;
 import org.goobi.production.plugin.interfaces.AbstractStatisticsPlugin;
 import org.goobi.production.plugin.interfaces.IStatisticPlugin;
 
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.ProcessManager;
 
 @PluginImplementation
 public class StorageIncrease extends AbstractStatisticsPlugin implements IStatisticPlugin {
 
-	private static final String PLUGIN_TITLE = "intranda_statistics_storageIncrease";
-	
+    private static final String PLUGIN_TITLE = "intranda_statistics_storageIncrease";
+
     @Override
     public String getTitle() {
         return PLUGIN_TITLE;
     }
-    
+
     private Date startDate;
 
     private Date endDate;
@@ -157,7 +160,13 @@ public class StorageIncrease extends AbstractStatisticsPlugin implements IStatis
 
     @Override
     public boolean getPermissions() {
-        //darf niemand sehen
+        // nur Nutzergruppe Projectmanager
+        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+        for (Usergroup ug : user.getBenutzergruppen()) {
+            if (ug.getTitel().equals("Projectmanager")) {
+                return true;
+            }
+        }
         return false;
     }
 
