@@ -28,6 +28,7 @@ public class OpenStepsPerProjectPlugin extends AbstractStatisticsPlugin implemen
 
         for (Project project : projectList) {
             ProjectData pd = new ProjectData();
+            pd.setTitle(PLUGIN_TITLE);
             pd.setProject(project);
             projectDataList.add(pd);
         }

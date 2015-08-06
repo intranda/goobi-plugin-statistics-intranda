@@ -1,6 +1,5 @@
 package de.intranda.goobi.plugins.statistics.util;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,14 +23,15 @@ import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.goobi.beans.Project;
 import org.goobi.beans.Step;
-import org.goobi.beans.Usergroup;
 import org.goobi.production.flow.statistics.hibernate.FilterHelper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
+import com.lowagie.text.Font;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfImportedPage;
@@ -45,7 +45,6 @@ import de.intranda.goobi.plugins.statistics.OpenStepsPerProjectPlugin;
 import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.StepManager;
-import de.sub.goobi.persistence.managers.UsergroupManager;
 
 public class ProjectData {
     private static final Logger logger = Logger.getLogger(OpenStepsPerProjectPlugin.class);
@@ -56,6 +55,8 @@ public class ProjectData {
 
     private List<PieType> list;
     private String data;
+    
+    private String title;
 
     private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xls";
 
@@ -246,42 +247,55 @@ public class ProjectData {
 
             PdfPTable table = new PdfPTable(2);
 
-            table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+            table.getDefaultCell().setBorder(Rectangle.BOX);
             table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+           
 
-            PdfPCell cell1 = new PdfPCell();
-            cell1.setBackgroundColor(Color.blue);
-            cell1.addElement(new Paragraph(Helper.getTranslation("userGroup")));
-            cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-
-            PdfPCell cell2 = new PdfPCell();
-            cell2.setBackgroundColor(Color.yellow);
-            cell2.addElement(new Paragraph(Helper.getTranslation("count")));
-            cell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-
+            PdfPCell cell1 = new PdfPCell(new Paragraph(Helper.getTranslation("benutzergruppe"),new Font(BaseFont.createFont(), 11)));
+            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell1.setMinimumHeight(25f);
+            
+            PdfPCell cell2 = new PdfPCell(new Paragraph(Helper.getTranslation("count"),new Font(BaseFont.createFont(), 11)));
+            cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell2.setMinimumHeight(25f);
+            
             table.addCell(cell1);
             table.addCell(cell2);
 
             for (PieType pt : list) {
-                table.addCell(pt.getLabel());
-                table.addCell("" + pt.getData());
+            	PdfPCell tc = new PdfPCell(new Paragraph(pt.getLabel(),new Font(BaseFont.createFont(), 10)));
+            	tc.setHorizontalAlignment(Element.ALIGN_LEFT);
+            	tc.setVerticalAlignment(Element.ALIGN_TOP);
+            	tc.setMinimumHeight(18f);
+            	table.addCell(tc);
+            	
+            	PdfPCell tc2 = new PdfPCell(new Paragraph(pt.getData() + "",new Font(BaseFont.createFont(), 10)));
+            	tc2.setHorizontalAlignment(Element.ALIGN_LEFT);
+               	tc2.setVerticalAlignment(Element.ALIGN_TOP);
+            	tc2.setMinimumHeight(18f);
+            	table.addCell(tc2);
             }
 
             PdfReader pdfReader = new PdfReader(PDF_TEMPLATE_NAME);
             PdfStamper pdfStamper = new PdfStamper(pdfReader, out);
 
             PdfImportedPage page = pdfStamper.getImportedPage(pdfReader, 1);
+//            page.setFontAndSize(BaseFont.createFont(), 9);
 
             PdfContentByte content = pdfStamper.getOverContent(1);
             content.addTemplate(page, 0, 0);
-
+            content.setFontAndSize(BaseFont.createFont(), 9);
+            
             table.setHeaderRows(1);
-            table.setTotalWidth(500);
+            table.setTotalWidth(510);
 
-            Paragraph p = new Paragraph("Nutzergruppen");
-            ColumnText.showTextAligned(content, Element.ALIGN_CENTER, p, 70, 760, 0);
+            Paragraph p = new Paragraph(Helper.getTranslation(title), new Font(BaseFont.createFont(), 14));
+            ColumnText.showTextAligned(content, Element.ALIGN_LEFT, p, 40, 750, 0);
 
-            table.writeSelectedRows(0, -1, 30, 750, content);
+            table.writeSelectedRows(0, -1, 40, 730, content);
 
             pdfStamper.close();
             pdfReader.close();
@@ -299,4 +313,8 @@ public class ProjectData {
             return "";
         }
     }
+    
+    public void setTitle(String title) {
+		this.title = title;
+	}
 }

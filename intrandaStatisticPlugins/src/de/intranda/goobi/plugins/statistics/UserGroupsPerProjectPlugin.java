@@ -34,6 +34,7 @@ public class UserGroupsPerProjectPlugin extends AbstractStatisticsPlugin impleme
 
         for (Project project : projectList) {
             UserGroupProjectData pd = new UserGroupProjectData();
+            pd.setTitle(PLUGIN_TITLE);
             pd.setProject(project);
             projectDataList.add(pd);
         }
