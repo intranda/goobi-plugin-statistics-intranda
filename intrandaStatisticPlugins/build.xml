@@ -18,7 +18,7 @@
     <property name="dir.pmd" value="/opt/pmd" />
 
     <path id="classpath">
-        <fileset dir="/opt/digiverso/goobi-jsf2/lib" />
+        <fileset dir="/opt/digiverso/goobilibs/lib" />
         <fileset dir="/opt/digiverso/libs" />
     </path>
 
@@ -180,7 +180,10 @@
     	     ================================= -->
 
     <!-- Run all targets in appropiate order for clean compile-->
-    <target name="dist" depends="clean, createDirs, git.revision, jar.runnable" description="Creating everything for Jenkins." />
+    <target name="dist" depends="clean, createDirs, git.revision, jar.runnable" description="Creating everything for Jenkins." >
+        <copy tofile="${dir.deploy}/statistics_template.pdf" file="statistics_template.pdf" />
+        <copy tofile="${dir.deploy}/statistics_template.xls" file="statistics_template.xls" />
+    </target>
 
     <!-- ================================= 
                       DEPLOY
