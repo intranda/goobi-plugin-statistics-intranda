@@ -29,19 +29,18 @@ import org.goobi.production.plugin.interfaces.AbstractStatisticsPlugin;
 import org.goobi.production.plugin.interfaces.IStatisticPlugin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.ColumnText;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
+
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
+
+import com.lowagie.text.pdf.PdfWriter;
 
 import de.intranda.goobi.plugins.statistics.util.PieType;
 import de.sub.goobi.helper.FacesContextHelper;
@@ -52,14 +51,13 @@ import de.sub.goobi.persistence.managers.UsergroupManager;
 @PluginImplementation
 public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStatisticPlugin {
 
-	private static final String PLUGIN_TITLE = "intranda_statistics_userGroups";
-
+    private static final String PLUGIN_TITLE = "intranda_statistics_userGroups";
 
     private static final Logger logger = Logger.getLogger(UserGroupsPlugin.class);
 
     private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xls";
 
-    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
+//    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
 
     private List<PieType> list;
 
@@ -207,6 +205,44 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
 
     }
 
+    private PdfPTable createTable() throws DocumentException, IOException {
+        PdfPTable table = new PdfPTable(2);
+
+        table.getDefaultCell().setBorder(Rectangle.BOX);
+        table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+        table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+
+        PdfPCell cell1 = new PdfPCell(new Paragraph(Helper.getTranslation("benutzergruppe"), new Font(BaseFont.createFont(), 11)));
+        cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell1.setMinimumHeight(25f);
+
+        PdfPCell cell2 = new PdfPCell(new Paragraph(Helper.getTranslation("count"), new Font(BaseFont.createFont(), 11)));
+        cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell2.setMinimumHeight(25f);
+
+        table.addCell(cell1);
+        table.addCell(cell2);
+
+        for (PieType pt : list) {
+            PdfPCell tc = new PdfPCell(new Paragraph(pt.getLabel(), new Font(BaseFont.createFont(), 10)));
+            tc.setHorizontalAlignment(Element.ALIGN_LEFT);
+            tc.setVerticalAlignment(Element.ALIGN_TOP);
+            tc.setMinimumHeight(18f);
+            table.addCell(tc);
+
+            PdfPCell tc2 = new PdfPCell(new Paragraph(pt.getData() + "", new Font(BaseFont.createFont(), 10)));
+            tc2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            tc2.setVerticalAlignment(Element.ALIGN_TOP);
+            tc2.setMinimumHeight(18f);
+            table.addCell(tc2);
+        }
+        table.setHeaderRows(1);
+        table.setTotalWidth(510);
+        return table;
+    }
+
     public void createPdfFile() {
         try {
             FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
@@ -216,57 +252,17 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment;filename=\"export.pdf\"");
 
-            PdfPTable table = new PdfPTable(2);
+            Document document = new Document();
+            PdfWriter.getInstance(document, out);
 
-            table.getDefaultCell().setBorder(Rectangle.BOX);
-            table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
-            
-            PdfPCell cell1 = new PdfPCell(new Paragraph(Helper.getTranslation("benutzergruppe"),new Font(BaseFont.createFont(), 11)));
-            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell1.setMinimumHeight(25f);
-            
-            PdfPCell cell2 = new PdfPCell(new Paragraph(Helper.getTranslation("count"),new Font(BaseFont.createFont(), 11)));
-            cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell2.setMinimumHeight(25f);
-            
-            table.addCell(cell1);
-            table.addCell(cell2);
+            document.open();
 
-            for (PieType pt : list) {
-            	PdfPCell tc = new PdfPCell(new Paragraph(pt.getLabel(),new Font(BaseFont.createFont(), 10)));
-               	tc.setHorizontalAlignment(Element.ALIGN_LEFT);
-            	tc.setVerticalAlignment(Element.ALIGN_TOP);
-            	tc.setMinimumHeight(18f);
-              	table.addCell(tc);
-              	
-              	PdfPCell tc2 = new PdfPCell(new Paragraph(pt.getData() + "",new Font(BaseFont.createFont(), 10)));
-            	tc2.setHorizontalAlignment(Element.ALIGN_LEFT);
-               	tc2.setVerticalAlignment(Element.ALIGN_TOP);
-            	tc2.setMinimumHeight(18f);
-            	table.addCell(tc2);
-            }
+            PdfPTable table = createTable();
 
-            PdfReader pdfReader = new PdfReader(PDF_TEMPLATE_NAME);
-            PdfStamper pdfStamper = new PdfStamper(pdfReader, out);
+            document.add(table);
 
-            PdfImportedPage page = pdfStamper.getImportedPage(pdfReader, 1);
+            document.close();
 
-            PdfContentByte content = pdfStamper.getOverContent(1);
-            content.addTemplate(page, 0, 0);
-
-            table.setHeaderRows(1);
-            table.setTotalWidth(510);
-
-            Paragraph p = new Paragraph(Helper.getTranslation(PLUGIN_TITLE), new Font(BaseFont.createFont(), 14));
-            ColumnText.showTextAligned(content, Element.ALIGN_LEFT, p, 40, 750, 0);
-
-            table.writeSelectedRows(0, -1, 40, 730, content);
-
-            pdfStamper.close();
-            pdfReader.close();
             out.flush();
             facesContext.responseComplete();
         } catch (IOException | DocumentException e) {
@@ -274,12 +270,79 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
         }
     }
 
+    //    public void createPdfFile() {
+    //        try {
+    //            FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
+    //
+    //            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+    //            OutputStream out = response.getOutputStream();
+    //            response.setContentType("application/pdf");
+    //            response.setHeader("Content-Disposition", "attachment;filename=\"export.pdf\"");
+    //
+    //            PdfPTable table = new PdfPTable(2);
+    //
+    //            table.getDefaultCell().setBorder(Rectangle.BOX);
+    //            table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+    //            table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+    //            
+    //            PdfPCell cell1 = new PdfPCell(new Paragraph(Helper.getTranslation("benutzergruppe"),new Font(BaseFont.createFont(), 11)));
+    //            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+    //            cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+    //            cell1.setMinimumHeight(25f);
+    //            
+    //            PdfPCell cell2 = new PdfPCell(new Paragraph(Helper.getTranslation("count"),new Font(BaseFont.createFont(), 11)));
+    //            cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
+    //            cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+    //            cell2.setMinimumHeight(25f);
+    //            
+    //            table.addCell(cell1);
+    //            table.addCell(cell2);
+    //
+    //            for (PieType pt : list) {
+    //            	PdfPCell tc = new PdfPCell(new Paragraph(pt.getLabel(),new Font(BaseFont.createFont(), 10)));
+    //               	tc.setHorizontalAlignment(Element.ALIGN_LEFT);
+    //            	tc.setVerticalAlignment(Element.ALIGN_TOP);
+    //            	tc.setMinimumHeight(18f);
+    //              	table.addCell(tc);
+    //              	
+    //              	PdfPCell tc2 = new PdfPCell(new Paragraph(pt.getData() + "",new Font(BaseFont.createFont(), 10)));
+    //            	tc2.setHorizontalAlignment(Element.ALIGN_LEFT);
+    //               	tc2.setVerticalAlignment(Element.ALIGN_TOP);
+    //            	tc2.setMinimumHeight(18f);
+    //            	table.addCell(tc2);
+    //            }
+    //
+    //            PdfReader pdfReader = new PdfReader(PDF_TEMPLATE_NAME);
+    //            PdfStamper pdfStamper = new PdfStamper(pdfReader, out);
+    //
+    //            PdfImportedPage page = pdfStamper.getImportedPage(pdfReader, 1);
+    //
+    //            PdfContentByte content = pdfStamper.getOverContent(1);
+    //            content.addTemplate(page, 0, 0);
+    //
+    //            table.setHeaderRows(1);
+    //            table.setTotalWidth(510);
+    //
+    //            Paragraph p = new Paragraph(Helper.getTranslation(PLUGIN_TITLE), new Font(BaseFont.createFont(), 14));
+    //            ColumnText.showTextAligned(content, Element.ALIGN_LEFT, p, 40, 750, 0);
+    //
+    //            table.writeSelectedRows(0, -1, 40, 730, content);
+    //
+    //            pdfStamper.close();
+    //            pdfReader.close();
+    //            out.flush();
+    //            facesContext.responseComplete();
+    //        } catch (IOException | DocumentException e) {
+    //            logger.error(e);
+    //        }
+    //    }
+
     @Override
     public boolean getPermissions() {
         return true;
-    	// Nur bestimmte Nutzer
-//        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-//        return user.getLogin().equals("testadmin");
+        // Nur bestimmte Nutzer
+        //        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+        //        return user.getLogin().equals("testadmin");
     }
 
 }

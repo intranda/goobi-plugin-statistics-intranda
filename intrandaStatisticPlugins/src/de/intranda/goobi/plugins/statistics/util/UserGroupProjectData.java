@@ -1,5 +1,6 @@
 package de.intranda.goobi.plugins.statistics.util;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,19 +28,17 @@ import org.goobi.beans.Usergroup;
 import org.goobi.production.flow.statistics.hibernate.FilterHelper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.ColumnText;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
+
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
+import com.lowagie.text.pdf.PdfWriter;
 
 import de.intranda.goobi.PluginInfo;
 import de.sub.goobi.helper.FacesContextHelper;
@@ -61,7 +60,7 @@ public class UserGroupProjectData {
     private String title = "";
     private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xls";
 
-    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
+    //    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
 
     public boolean isSelected() {
         return selected;
@@ -145,7 +144,7 @@ public class UserGroupProjectData {
     public List<PieType> getDataList() {
         return list;
     }
-    
+
     public List<PieType> getList() {
         return list;
     }
@@ -153,8 +152,6 @@ public class UserGroupProjectData {
     public void setList(List<PieType> list) {
         this.list = list;
     }
-
-
 
     public void createExcelFile() {
         try {
@@ -200,6 +197,65 @@ public class UserGroupProjectData {
 
     }
 
+    private PdfPTable createTable() throws DocumentException, IOException {
+        PdfPTable table = new PdfPTable(2);
+        // header and footer
+
+        table.getDefaultCell().setBorder(Rectangle.BOX);
+        table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+        table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+
+        PdfPCell cell1 = new PdfPCell(new Paragraph(Helper.getTranslation("benutzergruppe"), new Font(BaseFont.createFont(), 11)));
+        cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell1.setMinimumHeight(25f);
+        cell1.setBackgroundColor(Color.LIGHT_GRAY);
+
+        PdfPCell cell2 = new PdfPCell(new Paragraph(Helper.getTranslation("count"), new Font(BaseFont.createFont(), 11)));
+        cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell2.setMinimumHeight(25f);
+        cell2.setBackgroundColor(Color.LIGHT_GRAY);
+
+        table.addCell(cell1);
+        table.addCell(cell2);
+
+        PdfPCell cell3 = new PdfPCell(new Paragraph(Helper.getTranslation("benutzergruppe"), new Font(BaseFont.createFont(), 11)));
+        cell3.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell3.setMinimumHeight(25f);
+        cell3.setBackgroundColor(Color.LIGHT_GRAY);
+
+        PdfPCell cell4 = new PdfPCell(new Paragraph(Helper.getTranslation("count"), new Font(BaseFont.createFont(), 11)));
+        cell4.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell4.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell4.setMinimumHeight(25f);
+        cell4.setBackgroundColor(Color.LIGHT_GRAY);
+
+        table.addCell(cell3);
+        table.addCell(cell4);
+        table.setHeaderRows(2);
+        table.setFooterRows(1);
+
+        // content
+
+        for (PieType pt : list) {
+            PdfPCell tc = new PdfPCell(new Paragraph(pt.getLabel(), new Font(BaseFont.createFont(), 10)));
+            tc.setHorizontalAlignment(Element.ALIGN_LEFT);
+            tc.setVerticalAlignment(Element.ALIGN_TOP);
+            tc.setMinimumHeight(18f);
+            table.addCell(tc);
+
+            PdfPCell tc2 = new PdfPCell(new Paragraph(pt.getData() + "", new Font(BaseFont.createFont(), 10)));
+            tc2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            tc2.setVerticalAlignment(Element.ALIGN_TOP);
+            tc2.setMinimumHeight(18f);
+            table.addCell(tc2);
+        }
+
+        return table;
+    }
+
     public void createPdfFile() {
         try {
             FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
@@ -209,63 +265,56 @@ public class UserGroupProjectData {
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment;filename=\"export.pdf\"");
 
-            PdfPTable table = new PdfPTable(2);
+            Document document = new Document();
+            PdfWriter.getInstance(document, out);
 
-            table.getDefaultCell().setBorder(Rectangle.BOX);
-            table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
-            
-            PdfPCell cell1 = new PdfPCell(new Paragraph(Helper.getTranslation("benutzergruppe"),new Font(BaseFont.createFont(), 11)));
-            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell1.setMinimumHeight(25f);
+            document.open();
 
-            PdfPCell cell2 = new PdfPCell(new Paragraph(Helper.getTranslation("count"),new Font(BaseFont.createFont(), 11)));
-            cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell2.setMinimumHeight(25f);
+            PdfPTable table = createTable();
 
-            table.addCell(cell1);
-            table.addCell(cell2);
+            document.add(table);
 
-            for (PieType pt : list) {
-            	PdfPCell tc = new PdfPCell(new Paragraph(pt.getLabel(),new Font(BaseFont.createFont(), 10)));
-            	tc.setHorizontalAlignment(Element.ALIGN_LEFT);
-            	tc.setVerticalAlignment(Element.ALIGN_TOP);
-            	tc.setMinimumHeight(18f);
-            	table.addCell(tc);
-            	
-            	PdfPCell tc2 = new PdfPCell(new Paragraph(pt.getData() + "",new Font(BaseFont.createFont(), 10)));
-            	tc2.setHorizontalAlignment(Element.ALIGN_LEFT);
-               	tc2.setVerticalAlignment(Element.ALIGN_TOP);
-            	tc2.setMinimumHeight(18f);
-            	table.addCell(tc2);
-            }
+            document.close();
 
-            PdfReader pdfReader = new PdfReader(PDF_TEMPLATE_NAME);
-            PdfStamper pdfStamper = new PdfStamper(pdfReader, out);
-
-            PdfImportedPage page = pdfStamper.getImportedPage(pdfReader, 1);
-
-            PdfContentByte content = pdfStamper.getOverContent(1);
-            content.addTemplate(page, 0, 0);
-
-            table.setHeaderRows(1);
-            table.setTotalWidth(510);
-
-            Paragraph p = new Paragraph(Helper.getTranslation(title), new Font(BaseFont.createFont(), 14));
-            ColumnText.showTextAligned(content, Element.ALIGN_LEFT, p, 40, 750, 0);
-
-            table.writeSelectedRows(0, -1, 40, 730, content);            
-
-            pdfStamper.close();
-            pdfReader.close();
             out.flush();
             facesContext.responseComplete();
         } catch (IOException | DocumentException e) {
             logger.error(e);
         }
     }
+
+    //    public void createPdfFile() {
+    //        try {
+    //            FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
+    //
+    //            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+    //            OutputStream out = response.getOutputStream();
+    //            response.setContentType("application/pdf");
+    //            response.setHeader("Content-Disposition", "attachment;filename=\"export.pdf\"");
+    //
+    //            PdfPTable table = createTable();
+    //
+    //            PdfReader pdfReader = new PdfReader(PDF_TEMPLATE_NAME);
+    //            PdfStamper pdfStamper = new PdfStamper(pdfReader, out);
+    //
+    //            PdfImportedPage page = pdfStamper.getImportedPage(pdfReader, 1);
+    //
+    //            PdfContentByte content = pdfStamper.getOverContent(1);
+    //            content.addTemplate(page, 0, 0);
+    //
+    //            Paragraph p = new Paragraph(Helper.getTranslation(title), new Font(BaseFont.createFont(), 14));
+    //            ColumnText.showTextAligned(content, Element.ALIGN_LEFT, p, 40, 750, 0);
+    //
+    //            table.writeSelectedRows(0, -1, 40, 730, content);
+    //
+    //            pdfStamper.close();
+    //            pdfReader.close();
+    //            out.flush();
+    //            facesContext.responseComplete();
+    //        } catch (IOException | DocumentException e) {
+    //            logger.error(e);
+    //        }
+    //    }
 
     public String getEndDate() {
         if (project.getEndDate() != null) {
@@ -274,8 +323,8 @@ public class UserGroupProjectData {
             return "";
         }
     }
-    
+
     public void setTitle(String title) {
-		this.title = title;
-	}
+        this.title = title;
+    }
 }

@@ -26,19 +26,18 @@ import org.goobi.beans.Step;
 import org.goobi.production.flow.statistics.hibernate.FilterHelper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.ColumnText;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
+
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
+
+import com.lowagie.text.pdf.PdfWriter;
 
 import de.intranda.goobi.PluginInfo;
 import de.intranda.goobi.plugins.statistics.OpenStepsPerProjectPlugin;
@@ -55,12 +54,12 @@ public class ProjectData {
 
     private List<PieType> list;
     private String data;
-    
+
     private String title;
 
     private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xls";
 
-    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
+//    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
 
     public boolean isSelected() {
         return selected;
@@ -122,60 +121,58 @@ public class ProjectData {
 
     }
 
-    
-//    public void calculateUserGroupAssignment() {
-//        
-//        String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);
-//        List<Step> stepList = null;
-//        if (filterString == null || filterString.length() == 0) {
-//            stepList = StepManager.getSteps(null, " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2)  ");
-//        } else {
-//            stepList =
-//                    StepManager.getSteps(null,
-//                            " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
-//                                    + filterString + ")");
-//        }
-//
-//        Map<String, Integer> counter = new TreeMap<String, Integer>();
-//
-//        for (Step step : stepList) {
-//            for (Usergroup group : UsergroupManager.getUserGroupsForStep(step.getId())) {
-//
-//                if (counter.containsKey(group.getTitel())) {
-//                    counter.put(group.getTitel(), counter.get(group.getTitel()) + 1);
-//                } else {
-//                    counter.put(group.getTitel(), 1);
-//                }
-//            }
-//        }
-//
-//        list = new ArrayList<PieType>();
-//
-//        for (String groupName : counter.keySet()) {
-//            int value = counter.get(groupName);
-//
-//            PieType type = new PieType();
-//            type.setLabel(groupName);
-//            type.setData(value);
-//            type.setColor(PluginInfo.getRandomColor());
-//            list.add(type);
-//
-//        }
-//
-//        StringWriter writer = new StringWriter();
-//        ObjectMapper mapper = new ObjectMapper();
-//
-//        try {
-//            mapper.writeValue(writer, list);
-//        } catch (IOException e) {
-//            logger.error(e);
-//        }
-//
-//        data = writer.toString();
-//        
-//    }
-    
-    
+    //    public void calculateUserGroupAssignment() {
+    //        
+    //        String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);
+    //        List<Step> stepList = null;
+    //        if (filterString == null || filterString.length() == 0) {
+    //            stepList = StepManager.getSteps(null, " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2)  ");
+    //        } else {
+    //            stepList =
+    //                    StepManager.getSteps(null,
+    //                            " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
+    //                                    + filterString + ")");
+    //        }
+    //
+    //        Map<String, Integer> counter = new TreeMap<String, Integer>();
+    //
+    //        for (Step step : stepList) {
+    //            for (Usergroup group : UsergroupManager.getUserGroupsForStep(step.getId())) {
+    //
+    //                if (counter.containsKey(group.getTitel())) {
+    //                    counter.put(group.getTitel(), counter.get(group.getTitel()) + 1);
+    //                } else {
+    //                    counter.put(group.getTitel(), 1);
+    //                }
+    //            }
+    //        }
+    //
+    //        list = new ArrayList<PieType>();
+    //
+    //        for (String groupName : counter.keySet()) {
+    //            int value = counter.get(groupName);
+    //
+    //            PieType type = new PieType();
+    //            type.setLabel(groupName);
+    //            type.setData(value);
+    //            type.setColor(PluginInfo.getRandomColor());
+    //            list.add(type);
+    //
+    //        }
+    //
+    //        StringWriter writer = new StringWriter();
+    //        ObjectMapper mapper = new ObjectMapper();
+    //
+    //        try {
+    //            mapper.writeValue(writer, list);
+    //        } catch (IOException e) {
+    //            logger.error(e);
+    //        }
+    //
+    //        data = writer.toString();
+    //        
+    //    }
+
     public List<PieType> getList() {
         return list;
     }
@@ -245,66 +242,133 @@ public class ProjectData {
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment;filename=\"export.pdf\"");
 
-            PdfPTable table = new PdfPTable(2);
+            Document document = new Document();
+            PdfWriter.getInstance(document, out);
 
-            table.getDefaultCell().setBorder(Rectangle.BOX);
-            table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
-           
+            document.open();
 
-            PdfPCell cell1 = new PdfPCell(new Paragraph(Helper.getTranslation("benutzergruppe"),new Font(BaseFont.createFont(), 11)));
-            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell1.setMinimumHeight(25f);
-            
-            PdfPCell cell2 = new PdfPCell(new Paragraph(Helper.getTranslation("count"),new Font(BaseFont.createFont(), 11)));
-            cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell2.setMinimumHeight(25f);
-            
-            table.addCell(cell1);
-            table.addCell(cell2);
+            PdfPTable table = createTable();
 
-            for (PieType pt : list) {
-            	PdfPCell tc = new PdfPCell(new Paragraph(pt.getLabel(),new Font(BaseFont.createFont(), 10)));
-            	tc.setHorizontalAlignment(Element.ALIGN_LEFT);
-            	tc.setVerticalAlignment(Element.ALIGN_TOP);
-            	tc.setMinimumHeight(18f);
-            	table.addCell(tc);
-            	
-            	PdfPCell tc2 = new PdfPCell(new Paragraph(pt.getData() + "",new Font(BaseFont.createFont(), 10)));
-            	tc2.setHorizontalAlignment(Element.ALIGN_LEFT);
-               	tc2.setVerticalAlignment(Element.ALIGN_TOP);
-            	tc2.setMinimumHeight(18f);
-            	table.addCell(tc2);
-            }
+            document.add(table);
 
-            PdfReader pdfReader = new PdfReader(PDF_TEMPLATE_NAME);
-            PdfStamper pdfStamper = new PdfStamper(pdfReader, out);
+            document.close();
 
-            PdfImportedPage page = pdfStamper.getImportedPage(pdfReader, 1);
-//            page.setFontAndSize(BaseFont.createFont(), 9);
-
-            PdfContentByte content = pdfStamper.getOverContent(1);
-            content.addTemplate(page, 0, 0);
-            content.setFontAndSize(BaseFont.createFont(), 9);
-            
-            table.setHeaderRows(1);
-            table.setTotalWidth(510);
-
-            Paragraph p = new Paragraph(Helper.getTranslation(title), new Font(BaseFont.createFont(), 14));
-            ColumnText.showTextAligned(content, Element.ALIGN_LEFT, p, 40, 750, 0);
-
-            table.writeSelectedRows(0, -1, 40, 730, content);
-
-            pdfStamper.close();
-            pdfReader.close();
             out.flush();
             facesContext.responseComplete();
         } catch (IOException | DocumentException e) {
             logger.error(e);
         }
     }
+
+    private PdfPTable createTable() throws DocumentException, IOException {
+        PdfPTable table = new PdfPTable(2);
+
+        table.getDefaultCell().setBorder(Rectangle.BOX);
+        table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+        table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+
+        PdfPCell cell1 = new PdfPCell(new Paragraph(Helper.getTranslation("benutzergruppe"), new Font(BaseFont.createFont(), 11)));
+        cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell1.setMinimumHeight(25f);
+
+        PdfPCell cell2 = new PdfPCell(new Paragraph(Helper.getTranslation("count"), new Font(BaseFont.createFont(), 11)));
+        cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell2.setMinimumHeight(25f);
+
+        table.addCell(cell1);
+        table.addCell(cell2);
+
+        for (PieType pt : list) {
+            PdfPCell tc = new PdfPCell(new Paragraph(pt.getLabel(), new Font(BaseFont.createFont(), 10)));
+            tc.setHorizontalAlignment(Element.ALIGN_LEFT);
+            tc.setVerticalAlignment(Element.ALIGN_TOP);
+            tc.setMinimumHeight(18f);
+            table.addCell(tc);
+
+            PdfPCell tc2 = new PdfPCell(new Paragraph(pt.getData() + "", new Font(BaseFont.createFont(), 10)));
+            tc2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            tc2.setVerticalAlignment(Element.ALIGN_TOP);
+            tc2.setMinimumHeight(18f);
+            table.addCell(tc2);
+        }
+
+        table.setHeaderRows(1);
+        table.setTotalWidth(510);
+
+        return table;
+    }
+
+    //    public void createPdfFile() {
+    //        try {
+    //            FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
+    //
+    //            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+    //            OutputStream out = response.getOutputStream();
+    //            response.setContentType("application/pdf");
+    //            response.setHeader("Content-Disposition", "attachment;filename=\"export.pdf\"");
+    //
+    //            PdfPTable table = new PdfPTable(2);
+    //
+    //            table.getDefaultCell().setBorder(Rectangle.BOX);
+    //            table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+    //            table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+    //           
+    //
+    //            PdfPCell cell1 = new PdfPCell(new Paragraph(Helper.getTranslation("benutzergruppe"),new Font(BaseFont.createFont(), 11)));
+    //            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+    //            cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+    //            cell1.setMinimumHeight(25f);
+    //            
+    //            PdfPCell cell2 = new PdfPCell(new Paragraph(Helper.getTranslation("count"),new Font(BaseFont.createFont(), 11)));
+    //            cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
+    //            cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+    //            cell2.setMinimumHeight(25f);
+    //            
+    //            table.addCell(cell1);
+    //            table.addCell(cell2);
+    //
+    //            for (PieType pt : list) {
+    //            	PdfPCell tc = new PdfPCell(new Paragraph(pt.getLabel(),new Font(BaseFont.createFont(), 10)));
+    //            	tc.setHorizontalAlignment(Element.ALIGN_LEFT);
+    //            	tc.setVerticalAlignment(Element.ALIGN_TOP);
+    //            	tc.setMinimumHeight(18f);
+    //            	table.addCell(tc);
+    //            	
+    //            	PdfPCell tc2 = new PdfPCell(new Paragraph(pt.getData() + "",new Font(BaseFont.createFont(), 10)));
+    //            	tc2.setHorizontalAlignment(Element.ALIGN_LEFT);
+    //               	tc2.setVerticalAlignment(Element.ALIGN_TOP);
+    //            	tc2.setMinimumHeight(18f);
+    //            	table.addCell(tc2);
+    //            }
+    //
+    //            PdfReader pdfReader = new PdfReader(PDF_TEMPLATE_NAME);
+    //            PdfStamper pdfStamper = new PdfStamper(pdfReader, out);
+    //
+    //            PdfImportedPage page = pdfStamper.getImportedPage(pdfReader, 1);
+    ////            page.setFontAndSize(BaseFont.createFont(), 9);
+    //
+    //            PdfContentByte content = pdfStamper.getOverContent(1);
+    //            content.addTemplate(page, 0, 0);
+    //            content.setFontAndSize(BaseFont.createFont(), 9);
+    //            
+    //            table.setHeaderRows(1);
+    //            table.setTotalWidth(510);
+    //
+    //            Paragraph p = new Paragraph(Helper.getTranslation(title), new Font(BaseFont.createFont(), 14));
+    //            ColumnText.showTextAligned(content, Element.ALIGN_LEFT, p, 40, 750, 0);
+    //
+    //            table.writeSelectedRows(0, -1, 40, 730, content);
+    //
+    //            pdfStamper.close();
+    //            pdfReader.close();
+    //            out.flush();
+    //            facesContext.responseComplete();
+    //        } catch (IOException | DocumentException e) {
+    //            logger.error(e);
+    //        }
+    //    }
 
     public String getEndDate() {
         if (project.getEndDate() != null) {
@@ -313,8 +377,8 @@ public class ProjectData {
             return "";
         }
     }
-    
+
     public void setTitle(String title) {
-		this.title = title;
-	}
+        this.title = title;
+    }
 }
