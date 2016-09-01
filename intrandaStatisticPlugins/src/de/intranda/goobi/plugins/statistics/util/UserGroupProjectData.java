@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -82,18 +83,19 @@ public class UserGroupProjectData {
         String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);
         List<Step> stepList = null;
         if (filterString == null || filterString.length() == 0) {
-            stepList = StepManager.getSteps(null, " (bearbeitungsstatus = 1)  ");
+            stepList = StepManager.getSteps("Reihenfolge", " (bearbeitungsstatus = 1)  ");
         } else {
             stepList =
-                    StepManager.getSteps(null,
+                    StepManager.getSteps("Reihenfolge",
                             " (bearbeitungsstatus = 1) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
                                     + filterString + ")");
         }
 
-        Map<String, Integer> counter = new TreeMap<String, Integer>();
+        Map<String, Integer> counter = new LinkedHashMap<String, Integer>();
 
         for (Step step : stepList) {
-            for (Usergroup group : UsergroupManager.getUserGroupsForStep(step.getId())) {
+            //System.out.println(step.getTitel());
+        	for (Usergroup group : UsergroupManager.getUserGroupsForStep(step.getId())) {
 
                 if (counter.containsKey(group.getTitel())) {
                     counter.put(group.getTitel(), counter.get(group.getTitel()) + 1);

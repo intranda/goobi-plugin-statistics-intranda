@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -83,16 +84,17 @@ public class ProjectData {
         List<Step> stepList = null;
 
         stepList =
-                StepManager.getSteps(null, " (bearbeitungsstatus = 1) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
+                StepManager.getSteps("Reihenfolge", " (bearbeitungsstatus = 1) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
                         + filterString + ")");
 
 //        stepList =
 //                StepManager.getSteps(null, " (bearbeitungsstatus != 3) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
 //                        + filterString + ")");
 
-        Map<String, Integer> counter = new TreeMap<String, Integer>();
+        Map<String, Integer> counter = new LinkedHashMap<String, Integer>();
 
         for (Step step : stepList) {
+        	//System.out.println(step.getTitel());
             if (counter.containsKey(step.getTitel())) {
                 counter.put(step.getTitel(), counter.get(step.getTitel()) + 1);
             } else {
