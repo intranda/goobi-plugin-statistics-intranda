@@ -78,13 +78,13 @@ public class ProjectData {
         this.project = project;
     }
 
-    public void calculateOpenSteps() {
+    public void calculateSteps(int status) {
 
         String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);
         List<Step> stepList = null;
 
         stepList =
-                StepManager.getSteps("Reihenfolge", " (bearbeitungsstatus = 1) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
+                StepManager.getSteps("Reihenfolge", " (bearbeitungsstatus = " + status + ") AND schritte.ProzesseID in (select ProzesseID from prozesse where "
                         + filterString + ")");
 
 //        stepList =
@@ -396,4 +396,5 @@ public class ProjectData {
     public void setTitle(String title) {
         this.title = title;
     }
+
 }

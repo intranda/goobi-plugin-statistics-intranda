@@ -15,11 +15,11 @@ import de.intranda.goobi.plugins.statistics.util.ProjectData;
 import de.sub.goobi.persistence.managers.ProjectManager;
 
 @PluginImplementation
-public class OpenStepsPerProjectPlugin extends AbstractStatisticsPlugin implements IStatisticPlugin {
+public class LockedStepsPerProjectPlugin extends AbstractStatisticsPlugin implements IStatisticPlugin {
 
-    private static final String PLUGIN_TITLE = "intranda_statistics_openStepsPerProject";
+    private static final String PLUGIN_TITLE = "intranda_statistics_lockedStepsPerProject";
 
-    private static final Logger logger = Logger.getLogger(OpenStepsPerProjectPlugin.class);
+    private static final Logger logger = Logger.getLogger(LockedStepsPerProjectPlugin.class);
 
     private List<ProjectData> projectDataList = new ArrayList<ProjectData>();
 
@@ -42,7 +42,7 @@ public class OpenStepsPerProjectPlugin extends AbstractStatisticsPlugin implemen
                 if (logger.isDebugEnabled()) {
                     logger.debug("Calculating data for project " + pd.getProject().getTitel());
                 }
-                pd.calculateSteps(1);
+                pd.calculateSteps(0);
             }
         }
     }
