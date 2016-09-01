@@ -83,8 +83,12 @@ public class ProjectData {
         List<Step> stepList = null;
 
         stepList =
-                StepManager.getSteps(null, " (bearbeitungsstatus != 3) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
+                StepManager.getSteps(null, " (bearbeitungsstatus = 1) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
                         + filterString + ")");
+
+//        stepList =
+//                StepManager.getSteps(null, " (bearbeitungsstatus != 3) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
+//                        + filterString + ")");
 
         Map<String, Integer> counter = new TreeMap<String, Integer>();
 
@@ -104,7 +108,7 @@ public class ProjectData {
             PieType type = new PieType();
             type.setLabel(stepName);
             type.setData(value);
-            type.setColor(PluginInfo.getRandomColor());
+            type.setColor(getRandomColor());
             list.add(type);
         }
 
@@ -121,6 +125,15 @@ public class ProjectData {
 
     }
 
+    private static String getRandomColor() {
+        String possibleValues = "0123456789ABCDEF";
+        String hexCode = "#";
+        for (int i = 0; i <= 5; i++) {
+            int index = (int) (Math.random() * 15);
+            hexCode += possibleValues.charAt(index);
+        }
+        return hexCode;
+    }
     //    public void calculateUserGroupAssignment() {
     //        
     //        String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);

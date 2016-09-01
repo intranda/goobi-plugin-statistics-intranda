@@ -82,11 +82,11 @@ public class UserGroupProjectData {
         String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);
         List<Step> stepList = null;
         if (filterString == null || filterString.length() == 0) {
-            stepList = StepManager.getSteps(null, " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2)  ");
+            stepList = StepManager.getSteps(null, " (bearbeitungsstatus = 1)  ");
         } else {
             stepList =
                     StepManager.getSteps(null,
-                            " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
+                            " (bearbeitungsstatus = 1) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
                                     + filterString + ")");
         }
 
@@ -111,7 +111,7 @@ public class UserGroupProjectData {
             PieType type = new PieType();
             type.setLabel(groupName);
             type.setData(value);
-            type.setColor(PluginInfo.getRandomColor());
+            type.setColor(getRandomColor());
             list.add(type);
 
         }
@@ -129,6 +129,16 @@ public class UserGroupProjectData {
 
     }
 
+    private static String getRandomColor() {
+        String possibleValues = "0123456789ABCDEF";
+        String hexCode = "#";
+        for (int i = 0; i <= 5; i++) {
+            int index = (int) (Math.random() * 15);
+            hexCode += possibleValues.charAt(index);
+        }
+        return hexCode;
+    }
+    
     public String getData() {
         return data;
     }
