@@ -160,14 +160,15 @@ public class StorageIncrease extends AbstractStatisticsPlugin implements IStatis
 
     @Override
     public boolean getPermissions() {
-        // nur Nutzergruppe Projectmanager
-        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        for (Usergroup ug : user.getBenutzergruppen()) {
-            if (ug.getTitel().equals("Projectmanager")) {
-                return true;
-            }
-        }
-        return false;
+        return true;
+//    	// nur Nutzergruppe Projectmanager
+//        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+//        for (Usergroup ug : user.getBenutzergruppen()) {
+//            if (ug.getTitel().equals("Projectmanager")) {
+//                return true;
+//            }
+//        }
+//        return false;
     }
 
 }

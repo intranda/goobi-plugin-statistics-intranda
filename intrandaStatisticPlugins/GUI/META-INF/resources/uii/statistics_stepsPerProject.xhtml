@@ -95,32 +95,39 @@
 										</h4>
 										<br />
 
-										<div id="placeholder_#{status.index}" class='flot'></div>
+										<h:panelGroup rendered="#{projectData.list.size() == 0}">
+											<h:outputText styleClass="alert alert-info alert-dismissable margin-bottom-10" value="#{msgs.statistics_noDataAvailable}" />
+										</h:panelGroup>
 
-										<br />
+										<h:panelGroup rendered="#{projectData.list.size() gt 0}">
+											<div id="placeholder_#{status.index}" class='flot'></div>
+											<br />
+	
+											<table class="table table-hover table-bordered" style="border: 1px solid #ddd;">
+												<ui:repeat var="datarow" value="#{projectData.list}">
+													<tr>
+														<td><i class="fa fa-square" style="color:#{datarow.color}"></i></td>
+														<td><h:outputText value="#{datarow.label}"  /></td>
+														<td><h:outputText value="#{datarow.data}"  /></td>
+													</tr>
+												</ui:repeat>
+											</table>
+	
+											<br />
+											<h:commandLink action="#{projectData.createExcelFile}"
+												rendered="#{projectData.data != null}" styleClass="margin-bottom-10">
+												<span class="btn margin-right-10 fa fa-file-excel-o" />
+	                                            <h:outputText value="#{msgs.createExcel}" />
+											</h:commandLink>
+											<br />
+											<h:commandLink action="#{projectData.createPdfFile}" 
+												rendered="#{projectData.data != null}">
+												<span class="btn margin-right-10 fa fa-file-pdf-o" />
+												<h:outputText value="#{msgs.createPdf}" />
+											</h:commandLink>
+										</h:panelGroup>
 
-										<table class="table table-hover table-bordered" style="border: 1px solid #ddd;">
-											<ui:repeat var="datarow" value="#{projectData.list}">
-												<tr>
-													<td><i class="fa fa-square" style="color:#{datarow.color}"></i></td>
-													<td><h:outputText value="#{datarow.label}"  /></td>
-													<td><h:outputText value="#{datarow.data}"  /></td>
-												</tr>
-											</ui:repeat>
-										</table>
-
-										<br />
-										<h:commandLink action="#{projectData.createExcelFile}"
-											rendered="#{projectData.data != null}" styleClass="margin-bottom-10">
-											<span class="btn margin-right-10 fa fa-file-excel-o" />
-                                            <h:outputText value="#{msgs.createExcel}" />
-										</h:commandLink>
-										<br />
-										<h:commandLink action="#{projectData.createPdfFile}" 
-											rendered="#{projectData.data != null}">
-											<span class="btn margin-right-10 fa fa-file-pdf-o" />
-											<h:outputText value="#{msgs.createPdf}" />
-										</h:commandLink>
+										
 
 										<div id="datafield_#{status.index}">
 											<h:inputText value="#{projectData.data}" styleClass="rawdata" style="display:none" />
