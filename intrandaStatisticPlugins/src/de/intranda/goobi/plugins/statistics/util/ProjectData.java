@@ -80,7 +80,7 @@ public class ProjectData {
 
     public void calculateSteps(int status) {
 
-        String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);
+        String filterString = FilterHelper.criteriaBuilder("\"project:" + project.getTitel() + "\"", false, null, null, null, true, false);
         List<Step> stepList = null;
 
         stepList =

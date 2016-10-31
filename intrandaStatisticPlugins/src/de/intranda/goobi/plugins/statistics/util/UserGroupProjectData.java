@@ -80,7 +80,7 @@ public class UserGroupProjectData {
     }
 
     public void calculate() {
-        String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);
+        String filterString = FilterHelper.criteriaBuilder("\"project:" + project.getTitel() + "\"", false, null, null, null, true, false);
         List<Step> stepList = null;
         if (filterString == null || filterString.length() == 0) {
             stepList = StepManager.getSteps("Reihenfolge", " (bearbeitungsstatus = 1)  ");
