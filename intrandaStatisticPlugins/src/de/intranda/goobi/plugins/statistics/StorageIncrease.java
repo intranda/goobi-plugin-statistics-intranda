@@ -7,16 +7,13 @@ import java.util.List;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
-import org.goobi.beans.User;
-import org.goobi.beans.Usergroup;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.goobi.production.flow.statistics.hibernate.Converter;
-import org.goobi.production.flow.statistics.hibernate.SQLStorage;
+import org.goobi.production.flow.statistics.hibernate.StatisticsFactory;
 import org.goobi.production.plugin.interfaces.AbstractStatisticsPlugin;
 import org.goobi.production.plugin.interfaces.IStatisticPlugin;
 
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.ProcessManager;
 
 @PluginImplementation
@@ -47,7 +44,7 @@ public class StorageIncrease extends AbstractStatisticsPlugin implements IStatis
     public void calculate() {
 
         List<Integer> IDlist = ProcessManager.getIDList(filter);
-        String natSQL = new SQLStorage(this.startDate, this.endDate, this.targetTimeUnit, IDlist).getSQL();
+        String natSQL = StatisticsFactory.getStorage(this.startDate, this.endDate, this.targetTimeUnit, IDlist).getSQL();
 
         @SuppressWarnings("rawtypes")
         List list = ProcessManager.runSQL(natSQL);
