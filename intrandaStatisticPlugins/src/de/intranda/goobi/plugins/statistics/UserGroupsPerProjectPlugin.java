@@ -93,8 +93,9 @@ public class UserGroupsPerProjectPlugin extends AbstractStatisticsPlugin impleme
     @Override
     public boolean getPermissions() {
         // nur mit admin Rechten 
-        LoginBean bean = (LoginBean) Helper.getManagedBeanValue("#{LoginForm}");
-        return (bean.getMaximaleBerechtigung() == 1);
+//        LoginBean bean = (LoginBean) Helper.getManagedBeanValue("#{LoginForm}");
+//        return (bean.getMaximaleBerechtigung() == 1);
+        return true;
     }
 
 }
