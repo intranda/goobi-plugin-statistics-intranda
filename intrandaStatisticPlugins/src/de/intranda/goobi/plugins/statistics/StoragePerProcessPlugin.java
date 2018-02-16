@@ -47,7 +47,7 @@ public class StoragePerProcessPlugin implements IStatisticPlugin {
     @Override
     public void calculate() {
 
-        StringBuilder processFilterQuery = new StringBuilder();
+    	    StringBuilder processFilterQuery = new StringBuilder();
 //        processList.append("SELECT ");
 //        processList.append(
 //                " prozesse.ProzesseID as processid, prozesse.Titel as title, h1.numericvalue as totalSize, h2.numericvalue as mediaSize, h3.numericvalue as masterSize");
@@ -103,6 +103,14 @@ public class StoragePerProcessPlugin implements IStatisticPlugin {
     
     public String getTotalSizeAllFormatted() {
 		return StatisticsHelper.humanReadableByteCount(totalSizeAll, true);
+    }
+    
+    public List<StoragePerProjectType> resultListShort(int inMax){
+    		if (inMax > resultList.size()) {
+    			return resultList;
+    		} else {
+    			return resultList.subList(0, inMax);
+    		}
     }
 
 }
