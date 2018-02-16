@@ -13,7 +13,8 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.statistics.hibernate.FilterHelper;
 import org.goobi.production.plugin.interfaces.IStatisticPlugin;
 
-import de.intranda.goobi.plugins.statistics.util.StorageType;
+import de.intranda.goobi.plugins.statistics.util.StatisticsHelper;
+import de.intranda.goobi.plugins.statistics.util.StoragePerProjectType;
 import de.sub.goobi.persistence.managers.MySQLHelper;
 import lombok.Data;
 import lombok.extern.log4j.Log4j;
@@ -22,17 +23,17 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 @Data
 @PluginImplementation
 @Log4j
-public class StoragePlugin implements IStatisticPlugin {
+public class StoragePerProcessPlugin implements IStatisticPlugin {
 
     private PluginType type = PluginType.Statistics;
-    private String title = "StoragePerProcesses";
-    private String gui = "/uii/statistics_storage.xhtml";
+    private String title = "plugin_intranda_statistics_storagePerProcess";
+    private String gui = "/uii/statistics_storagePerProcess.xhtml";
     private String filter;
 
     private Date startDate;
     private Date endDate;
 
-    private List<StorageType> dataList = new ArrayList<>();
+    private List<StoragePerProjectType> resultList = new ArrayList<>();
 
     private long totalSizeMaster;
     private long totalSizeMedia;
@@ -66,13 +67,11 @@ public class StoragePlugin implements IStatisticPlugin {
         processFilterQuery.append(" AND ");
         processFilterQuery.append(" prozesse.istTemplate = false group by prozesse.ProzesseID");
 
-        
-
         Connection connection = null;
         try {
             connection = MySQLHelper.getInstance().getConnection();
             QueryRunner run = new QueryRunner();
-            dataList = run.query(connection, "SELECT max(prozesse.ProzesseID) as processid, max(prozesse.Titel) as title, sum(h1.numericvalue) as totalSize, sum(h2.numericvalue) as mediaSize, sum(h3.numericvalue) as masterSize " +  processFilterQuery.toString(), new BeanListHandler<StorageType>(StorageType.class));
+            resultList = run.query(connection, "SELECT max(prozesse.ProzesseID) as processid, max(prozesse.Titel) as title, max(h1.numericvalue) as totalSize, max(h2.numericvalue) as mediaSize, max(h3.numericvalue) as masterSize " +  processFilterQuery.toString(), new BeanListHandler<StoragePerProjectType>(StoragePerProjectType.class));
             totalSizeAll = run.query(connection, "SELECT sum(h1.numericvalue) " + processFilterQuery.toString(), MySQLHelper.resultSetToLongHandler);
             totalSizeMedia = run.query(connection, "SELECT sum(h2.numericvalue) " + processFilterQuery.toString(), MySQLHelper.resultSetToLongHandler);
             totalSizeMaster = run.query(connection, "SELECT sum(h3.numericvalue) " + processFilterQuery.toString(), MySQLHelper.resultSetToLongHandler);
@@ -87,12 +86,23 @@ public class StoragePlugin implements IStatisticPlugin {
                 }
             }
         }
-
     }
 
     @Override
     public boolean getPermissions() {
         return true;
+    }
+    
+    public String getTotalSizeMasterFormatted() {
+		return StatisticsHelper.humanReadableByteCount(totalSizeMaster, true);
+    }
+    
+    public String getTotalSizeMediaFormatted() {
+		return StatisticsHelper.humanReadableByteCount(totalSizeMedia, true);
+    }
+    
+    public String getTotalSizeAllFormatted() {
+		return StatisticsHelper.humanReadableByteCount(totalSizeAll, true);
     }
 
 }
