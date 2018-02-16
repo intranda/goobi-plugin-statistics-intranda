@@ -50,11 +50,16 @@ public class StoragePlugin implements IStatisticPlugin {
 //        processList.append("SELECT ");
 //        processList.append(
 //                " prozesse.ProzesseID as processid, prozesse.Titel as title, h1.numericvalue as totalSize, h2.numericvalue as mediaSize, h3.numericvalue as masterSize");
-        processFilterQuery.append(" FROM prozesse left join batches on prozesse.batchID = batches.id ");
-        processFilterQuery.append("LEFT JOIN history h1 on h1.processId = prozesse.ProzesseID and (h1.type = 1) ");
-        processFilterQuery.append("LEFT JOIN history h2 on h2.processId = prozesse.ProzesseID and (h2.type = 14) ");
-        processFilterQuery.append("LEFT JOIN history h3 on h3.processId = prozesse.ProzesseID and (h3.type = 15) ");
-        processFilterQuery.append(",projekte WHERE prozesse.ProjekteID = projekte.ProjekteID ");
+        processFilterQuery.append("FROM  ");
+        processFilterQuery.append("(select processid, sum(numericvalue) as total from history where type = 1 group by processid) as h1, ");
+        processFilterQuery.append("(select processid, sum(numericvalue) as media from history where type = 14 group by processid) as h2, ");
+        processFilterQuery.append("(select processid, sum(numericvalue) as master from history where type = 15 group by processid) as h3 ");
+        processFilterQuery.append(", prozesse left join batches on prozesse.batchID = batches.id, projekte ");
+//        processFilterQuery.append(" FROM prozesse left join batches on prozesse.batchID = batches.id ");
+//        processFilterQuery.append("LEFT JOIN history h1 on h1.processId = prozesse.ProzesseID and (h1.type = 1) ");
+//        processFilterQuery.append("LEFT JOIN history h2 on h2.processId = prozesse.ProzesseID and (h2.type = 14) ");
+//        processFilterQuery.append("LEFT JOIN history h3 on h3.processId = prozesse.ProzesseID and (h3.type = 15) ");
+        processFilterQuery.append("WHERE prozesse.ProjekteID = projekte.ProjekteID ");
         String subquery = FilterHelper.criteriaBuilder(filter, false, null, null, null, true, false);
         if (StringUtils.isNotBlank(subquery)) {
             processFilterQuery.append(" AND ");
@@ -62,7 +67,7 @@ public class StoragePlugin implements IStatisticPlugin {
 
         }
         processFilterQuery.append(" AND ");
-        processFilterQuery.append(" prozesse.istTemplate = false ");
+        processFilterQuery.append(" prozesse.istTemplate = false and h1.processid = prozesse.ProzesseID and h2.processid = prozesse.ProzesseID and h3.processid = prozesse.ProzesseID");
 
         
 
@@ -70,11 +75,11 @@ public class StoragePlugin implements IStatisticPlugin {
         try {
             connection = MySQLHelper.getInstance().getConnection();
             QueryRunner run = new QueryRunner();
-            dataList = run.query(connection, "SELECT prozesse.ProzesseID as processid, prozesse.Titel as title, h1.numericvalue as totalSize, h2.numericvalue as mediaSize, h3.numericvalue as masterSize" +  processFilterQuery.toString(), new BeanListHandler<StorageType>(StorageType.class));
+            dataList = run.query(connection, "SELECT prozesse.ProzesseID as processid, prozesse.Titel as title, h1.total as totalSize, h2.media as mediaSize, h3.master as masterSize " +  processFilterQuery.toString(), new BeanListHandler<StorageType>(StorageType.class));
 
-            totalSizeAll = run.query(connection, "SELECT sum(h1.numericvalue) " + processFilterQuery.toString(), MySQLHelper.resultSetToLongHandler);
-            totalSizeMedia = run.query(connection, "SELECT sum(h2.numericvalue) " + processFilterQuery.toString(), MySQLHelper.resultSetToLongHandler);
-            totalSizeMaster = run.query(connection, "SELECT sum(h3.numericvalue) " + processFilterQuery.toString(), MySQLHelper.resultSetToLongHandler);
+            totalSizeAll = run.query(connection, "SELECT sum(h1.total) " + processFilterQuery.toString(), MySQLHelper.resultSetToLongHandler);
+            totalSizeMedia = run.query(connection, "SELECT sum(h2.media) " + processFilterQuery.toString(), MySQLHelper.resultSetToLongHandler);
+            totalSizeMaster = run.query(connection, "SELECT sum(h3.master) " + processFilterQuery.toString(), MySQLHelper.resultSetToLongHandler);
 
         } catch (SQLException e) {
             log.error(e);
