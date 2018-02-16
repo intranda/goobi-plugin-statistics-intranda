@@ -1,0 +1,100 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:composite="http://xmlns.jcp.org/jsf/composite"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:x="http://myfaces.apache.org/tomahawk"
+    xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <composite:interface>
+    </composite:interface>
+
+    <composite:implementation>
+
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="box box-color lightgrey box-bordered">
+                    <div class="box-title">
+                        <h3>
+                            <i class="fa fa-pie-chart"></i>
+                            <h:outputText value="#{msgs[StatisticalQuestionBean.currentPlugin.title]}" />
+                        </h3>
+                    </div>
+                    <div class="box-content">
+
+                        <h:form
+                            id="statisticplugin"
+                            rendered="#{NavigationForm.aktuell == 'a41'}">
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h:inputText
+                                        styleClass="control-label"
+                                        value="#{StatisticalQuestionBean.currentPlugin.filter}" />
+
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3"></div>
+
+                                <div class="col-sm-9">
+                                    <br />
+                                    <x:commandButton
+                                        id="myStatisticButton"
+                                        title="#{msgs.calculateStatistics}"
+                                        value="#{msgs.calculateStatistics}"
+                                        action="#{StatisticalQuestionBean.calculate}"
+                                        styleClass="btn btn-primary pull-right">
+                                        <f:ajax
+                                            execute="@form"
+                                            render="@form"></f:ajax>
+                                    </x:commandButton>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-sm-3">Titel</div>
+                                <div class="col-sm-3">total size: #{StatisticalQuestionBean.currentPlugin.totalSizeAll}</div>
+                                <div class="col-sm-3">media size: #{StatisticalQuestionBean.currentPlugin.totalSizeMedia}</div>
+                                <div class="col-sm-3">master size: #{StatisticalQuestionBean.currentPlugin.totalSizeMaster}</div>
+                                <x:dataList
+                                    value="#{StatisticalQuestionBean.currentPlugin.dataList}"
+                                    var="row">
+                                    <div class="col-sm-3">
+                                        <h:outputText value="#{row.title}" />
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <h:outputText value="#{row.totalSize}" />
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <h:outputText value="#{row.mediaSize}" />
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <h:outputText value="#{row.masterSize}" />
+                                    </div>
+
+                                </x:dataList>
+
+
+                            </div>
+
+
+                        </h:form>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </composite:implementation>
+
+</ui:composition>
+
+
