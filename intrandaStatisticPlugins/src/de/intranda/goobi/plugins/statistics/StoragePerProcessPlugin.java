@@ -73,8 +73,8 @@ public class StoragePerProcessPlugin implements IStatisticPlugin {
             QueryRunner run = new QueryRunner();
             resultList = run.query(connection, "SELECT max(prozesse.ProzesseID) as processid, max(prozesse.Titel) as title, sum(h1.numericvalue) as totalSize, sum(h2.numericvalue) as mediaSize, sum(h3.numericvalue) as masterSize " +  processFilterQuery.toString(), new BeanListHandler<StoragePerProjectType>(StoragePerProjectType.class));
             totalSizeAll = run.query(connection, "SELECT sum(tbl.total) from (SELECT sum(h1.numericvalue) as total " + processFilterQuery.toString() + ") tbl", MySQLHelper.resultSetToLongHandler);
-            totalSizeMedia = run.query(connection, "SELECT sum(tbl.mediaSize) from (SELECT sum(h2.numericvalue) as mediaSize" + processFilterQuery.toString() + ") tbl", MySQLHelper.resultSetToLongHandler);
-            totalSizeMaster = run.query(connection, "SELECT sum(tbl.masterSize) from (SELECT sum(h3.numericvalue) as masterSize" + processFilterQuery.toString() + ") tbl", MySQLHelper.resultSetToLongHandler);
+            totalSizeMedia = run.query(connection, "SELECT sum(tbl.mediaSize) from (SELECT sum(h2.numericvalue) as mediaSize " + processFilterQuery.toString() + ") tbl", MySQLHelper.resultSetToLongHandler);
+            totalSizeMaster = run.query(connection, "SELECT sum(tbl.masterSize) from (SELECT sum(h3.numericvalue) as masterSize " + processFilterQuery.toString() + ") tbl", MySQLHelper.resultSetToLongHandler);
 
         } catch (SQLException e) {
             log.error(e);
