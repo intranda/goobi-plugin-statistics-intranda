@@ -48,14 +48,14 @@ public class StoragePerProcessPlugin implements IStatisticPlugin {
     public void calculate() {
 
     	    StringBuilder processFilterQuery = new StringBuilder();
-//        processList.append("SELECT ");
+    	    processFilterQuery.append("select prozesse.ProzesseID as processid, prozesse.Titel as title, tbl1.total as totalSize, tbl2.mediaSize as mediaSize, tbl3.masterSize as masterSize ");
 //        processList.append(
 //                " prozesse.ProzesseID as processid, prozesse.Titel as title, h1.numericvalue as totalSize, h2.numericvalue as mediaSize, h3.numericvalue as masterSize");
         processFilterQuery.append("FROM prozesse ");
         processFilterQuery.append("left join batches on prozesse.batchID = batches.id ");
-        processFilterQuery.append("LEFT JOIN history h1 on h1.processId = prozesse.ProzesseID and (h1.type = 1) ");
-        processFilterQuery.append("LEFT JOIN history h2 on h2.processId = prozesse.ProzesseID and (h2.type = 14) ");
-        processFilterQuery.append("LEFT JOIN history h3 on h3.processId = prozesse.ProzesseID and (h3.type = 15) ");
+        processFilterQuery.append("LEFT JOIN (select processid as processid, sum(numericvalue) as total from history where type = 1 group by processid) tbl1 ON prozesse.ProzesseID = tbl1.processid ");
+        processFilterQuery.append("LEFT JOIN (select processid as processid, sum(numericvalue) as mediaSize from history where type = 14 group by processid) tbl2 ON prozesse.ProzesseID = tbl2.processid ");
+        processFilterQuery.append("LEFT JOIN (select processid as processid, sum(numericvalue) as masterSize from history where type = 15 group by processid) tbl3 ON prozesse.ProzesseID = tbl3.processid ");
         processFilterQuery.append(",projekte ");
         processFilterQuery.append("WHERE prozesse.ProjekteID = projekte.ProjekteID ");
         String subquery = FilterHelper.criteriaBuilder(filter, false, null, null, null, true, false);
@@ -65,16 +65,17 @@ public class StoragePerProcessPlugin implements IStatisticPlugin {
 
         }
         processFilterQuery.append(" AND ");
-        processFilterQuery.append(" prozesse.istTemplate = false group by prozesse.ProzesseID");
+        processFilterQuery.append(" prozesse.istTemplate = false ");
 
         Connection connection = null;
         try {
+            // TODO change queries to sum per type/process
             connection = MySQLHelper.getInstance().getConnection();
             QueryRunner run = new QueryRunner();
-            resultList = run.query(connection, "SELECT max(prozesse.ProzesseID) as processid, max(prozesse.Titel) as title, sum(h1.numericvalue) as totalSize, sum(h2.numericvalue) as mediaSize, sum(h3.numericvalue) as masterSize " +  processFilterQuery.toString(), new BeanListHandler<StoragePerProjectType>(StoragePerProjectType.class));
-            totalSizeAll = run.query(connection, "SELECT sum(tbl.total) from (SELECT sum(h1.numericvalue) as total " + processFilterQuery.toString() + ") tbl", MySQLHelper.resultSetToLongHandler);
-            totalSizeMedia = run.query(connection, "SELECT sum(tbl.mediaSize) from (SELECT sum(h2.numericvalue) as mediaSize " + processFilterQuery.toString() + ") tbl", MySQLHelper.resultSetToLongHandler);
-            totalSizeMaster = run.query(connection, "SELECT sum(tbl.masterSize) from (SELECT sum(h3.numericvalue) as masterSize " + processFilterQuery.toString() + ") tbl", MySQLHelper.resultSetToLongHandler);
+            resultList = run.query(connection, processFilterQuery.toString(), new BeanListHandler<StoragePerProjectType>(StoragePerProjectType.class));
+            totalSizeAll = run.query(connection, "select sum(totalSize) from (" + processFilterQuery.toString() + " ) t", MySQLHelper.resultSetToLongHandler);
+            totalSizeMedia = run.query(connection, "SELECT sum(mediaSize) from (" + processFilterQuery.toString()  + " ) t", MySQLHelper.resultSetToLongHandler);
+            totalSizeMaster = run.query(connection, "SELECT sum(masterSize) from (" + processFilterQuery.toString() + " ) t" , MySQLHelper.resultSetToLongHandler);
 
         } catch (SQLException e) {
             log.error(e);
