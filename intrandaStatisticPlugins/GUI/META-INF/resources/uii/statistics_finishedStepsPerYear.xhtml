@@ -78,12 +78,14 @@
 										</h:column>
 										<h:column>
 											<f:facet name="header">
+												<i class="fa fa-square" style="color:#4AC748; margin-right:5px;"></i>
 												<h:outputText value="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_processes}" />
 											</f:facet>
 											<h:outputText value="#{item.processes}" />
 										</h:column>
 										<h:column>
 											<f:facet name="header">
+												<i class="fa fa-square" style="color:#AE41E8; margin-right:5px;"></i>
 												<h:outputText value="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_images}" />
 											</f:facet>
 											<h:outputText value="#{item.images}" />
@@ -121,35 +123,29 @@
 	                        		<script type="text/javascript">
 									var ctx = document.getElementById("myChart").getContext('2d');
 									var myChart = new Chart(ctx, {
-									    type: 'bar',
+									    type: 'horizontalBar',
 									    data: {
 									        labels: [#{StatisticalQuestionBean.currentPlugin.chartLabels}],
-									        datasets: [{
-									            data: [#{StatisticalQuestionBean.currentPlugin.chartValuesImages}],
-									            backgroundColor: [
-									                'rgba(255, 99, 132, 0.2)'
-									            ]
+									        datasets: [
+									        {
+									        		label: "#{msgs.plugin_intranda_statistics_finishedStepsPerYear_processes}",
+									        		data: [#{StatisticalQuestionBean.currentPlugin.chartValuesProcesses}],
+									        		backgroundColor: "#4AC748"
 									        },
 									        {
-									            data: [#{StatisticalQuestionBean.currentPlugin.chartValuesProcesses}],
-									            backgroundColor: [
-									                'rgba(54, 162, 235, 0.2)'
-									            ]
-									        }]
+								        			label: "#{msgs.plugin_intranda_statistics_finishedStepsPerYear_images}",
+								            		data: [#{StatisticalQuestionBean.currentPlugin.chartValuesImages}],
+								            		backgroundColor: "#AE41E8"
+								        		}]
 									    },
 									    options: {
 									    		legend: {
-									            display: false
+									            display: true,
+									         	position: 'bottom'
 									        },
 									        responsive: true,
-									        maintainAspectRatio: false,
-									        scales: {
-									            yAxes: [{
-									                ticks: {
-									                    beginAtZero:true
-									                }
-									            }]
-									        }
+									        maintainAspectRatio: false
+									        
 									    }
 									});
 								</script>

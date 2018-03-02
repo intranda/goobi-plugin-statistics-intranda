@@ -18,6 +18,7 @@
     <property name="dir.pmd" value="/opt/pmd" />
 
     <path id="classpath">
+    		<fileset dir="/opt/digiverso/goobilibs/lib" />
         <fileset dir="/opt/digiverso/libs" />
     </path>
 
@@ -72,10 +73,8 @@
     <target name="linux" if="isUnix">
         <echo>Using Linux path: ${pluginFolderUnix}</echo>
         <copy tofile="${pluginFolderUnix}/${filename}.jar" file="${dir.deploy}/${filename}-${git.revision}.jar" overwrite="true" />
-    	<!--
     		<copy tofile="${pluginFolderUnix}/../GUI/${filename}-GUI.jar" file="${dir.deploy}/${filename}-GUI.jar" overwrite="true" />
-	-->
-    </target>
+	</target>
     <target name="win32" if="isWindows">
         <echo>Using Windows path: ${pluginFolderWin}</echo>
         <copy tofile="${pluginFolderWin}$${filename}-${git.revision}.jar" file="${dir.deploy}/${filename}-${git.revision}.jar" overwrite="true" />
