@@ -56,7 +56,7 @@ public class FinishedStepsPerYearPlugin implements IStatisticPlugin {
         try {
             connection = MySQLHelper.getInstance().getConnection();
             QueryRunner run = new QueryRunner();
-            stepnames = run.query(connection, "SELECT Distinct Titel FROM SCHRITTE ORDER BY Titel;", new ColumnListHandler<String>(1));
+            stepnames = run.query(connection, "SELECT distinct titel FROM schritte ORDER BY titel;", new ColumnListHandler<String>(1));
         } catch (SQLException e) {
             log.error(e);
         } finally {
