@@ -1,0 +1,144 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:composite="http://xmlns.jcp.org/jsf/composite"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:x="http://myfaces.apache.org/tomahawk"
+    xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <composite:interface>
+    </composite:interface>
+
+    <composite:implementation>
+
+
+
+        <h:form
+            id="statisticplugin"
+            styleClass="form-horizontal form-bordered">
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="box box-color blue box-bordered">
+                        <div class="box-title">
+                            <h3>
+                                <i class="glyphicon-compass box-icon-fix"></i>
+                                <h:outputText value="#{msgs.auswahl2}" />
+                            </h3>
+                        </div>
+                        <div class="box-content nopadding">
+
+                            <!-- ###################### input form ###################### -->
+
+                            <!-- Generate the statistics or cancel again -->
+                            <div class="form-actions">
+                                <h:commandButton
+                                    styleClass="btn btn-primary submitOnEnter pull-right font-size-s margin-bottom-most"
+                                    id="myStatisticButton"
+                                    type="submit"
+                                    title="#{msgs.calculateStatistics}"
+                                    action="#{StatisticalQuestionBean.calculate}"
+                                    value="#{msgs.calculateStatistics}">
+                                </h:commandButton>
+
+                                <h:commandButton
+                                    styleClass="btn margin-sides-10 font-size-s pull-right"
+                                    id="cancel"
+                                    title="#{msgs.calculateStatistics}"
+                                    action="#{StatisticalQuestionBean.currentPlugin.resetStatistics}"
+                                    value="#{msgs.abbrechen}">
+                                    <f:ajax
+                                        execute="@form"
+                                        render="@form"></f:ajax>
+                                </h:commandButton>
+                            </div>
+
+                            <!-- ###################### // input form ###################### -->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h:panelGroup rendered="#{StatisticalQuestionBean.currentPlugin.resultList != null}">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="box box-color lightgrey box-bordered">
+                            <div class="box-title">
+                                <h3>
+                                    <i class="fa fa-pie-chart"></i>
+                                    <h:outputText value="#{msgs[StatisticalQuestionBean.currentPlugin.title]}" />
+                                </h3>
+                            </div>
+                            <div class="box-content nopadding">
+
+                                <!-- ###################### result table ###################### -->
+
+                                <div class="dataTables_wrapper">
+                                    <div class="dataTables_length">
+                                        <h:outputText value="#{msgs.treffer}: #{StatisticalQuestionBean.currentPlugin.resultList.size()}" />
+                                    </div>
+
+
+
+                                    <x:dataTable
+                                        id="results"
+                                        styleClass="table table-hover table-nomargin dataTable table-bordered responsive"
+                                        var="item"
+                                        value="#{StatisticalQuestionBean.currentPlugin.resultList}">
+                                        <h:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="#{msgs.rawValue}" />
+                                            </f:facet>
+                                            <h:outputText value="#{item}" />
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="#{msgs.pages}" />
+                                            </f:facet>
+                                            <h:outputText value="#{item.pages}" />
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="#{msgs.processes}" />
+                                            </f:facet>
+                                            <h:outputText value="#{item.processes}" />
+                                        </h:column>
+                                        
+                                        <h:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="#{msgs.date}" />
+                                            </f:facet>
+                                            <h:outputText value="#{item.timerange}" />
+                                        </h:column>
+
+
+                                    </x:dataTable>
+
+                                </div>
+
+                                <!-- ###################### // result table ###################### -->
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </h:panelGroup>
+
+            <style>
+.box.box-bordered .table.table-bordered {
+    border-right: 1px solid #ddd;
+}
+</style>
+        </h:form>
+
+    </composite:implementation>
+
+</ui:composition>
+
+

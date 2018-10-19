@@ -19,10 +19,7 @@
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/iText-2.1.5.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/jsf-api-2.2.12.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/poi-ooxml-3.16.jar"/>
-	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/jackson-databind-2.6.6.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/jackson-annotations-2.6.0.jar"/>
-	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/jackson-core-2.6.6.jar"/>
-	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/jackson-dataformat-cbor-2.6.6.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/jackson-dataformat-csv-2.6.3.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/jackson-jaxrs-base-2.6.3.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/jackson-jaxrs-json-provider-2.6.3.jar"/>
@@ -34,5 +31,8 @@
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/lombok.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/commons-dbutils-1.6-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/gson-2.2.4.jar"/>
+	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/jackson-databind-2.6.7.1.jar"/>
+	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/jackson-core-2.6.7.jar"/>
+	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/jackson-dataformat-cbor-2.6.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
