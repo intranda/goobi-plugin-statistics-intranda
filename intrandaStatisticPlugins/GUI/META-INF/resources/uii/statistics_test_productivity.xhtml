@@ -19,21 +19,113 @@
 
         <h:form
             id="statisticplugin"
-            styleClass="form-horizontal form-bordered">
+            styleClass="form-vertical form-bordered">
 
             <div class="row">
                 <div class="col-sm-12">
-                    <div class="box box-color blue box-bordered">
+                    <div class="box box-color lightgrey box-bordered">
                         <div class="box-title">
                             <h3>
                                 <i class="glyphicon-compass box-icon-fix"></i>
                                 <h:outputText value="#{msgs.auswahl2}" />
                             </h3>
                         </div>
-                        <div class="box-content nopadding">
+                        <div class="box-content">
+                            <div class="row">
+                                <!-- ###################### input form ###################### -->
 
-                            <!-- ###################### input form ###################### -->
 
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <h:outputLabel
+                                            for="cal01"
+                                            styleClass="control-label"
+                                            value="#{msgs.zeitraum} #{msgs.from}" />
+                                        <div style="display: block">
+                                            <h:inputText value="#{StatisticalQuestionBean.currentPlugin.startDateText}" validatorMessage="#{msgs.statistics_wrong_date_format}">
+                                                <f:validateRegex pattern="^([0-9]{4}-[0-9]{1,2}-[0-9]{1,2})?$"></f:validateRegex>
+                                                <f:passThroughAttribute
+                                                    name="placeholder"
+                                                    value="YYYY-MM-DD" />
+                                            </h:inputText>
+                                            <!--  
+                                            <p:calendar
+                                                id="cal01"
+                                                value="#{StatisticalQuestionBean.currentPlugin.startDate}"
+                                                pattern="yyyy-MM-dd">
+                                                <f:passThroughAttribute
+                                                    name="placeholder"
+                                                    value="YYYY-MM-DD" />
+                                                <f:passThroughAttribute
+                                                    name="autocomplete"
+                                                    value="off" />
+
+                                            </p:calendar>
+-->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+
+                                    <div class="form-group">
+                                        <h:outputLabel
+                                            for="cal02"
+                                            styleClass="control-label"
+                                            value="#{msgs.zeitraum} #{msgs.to}" />
+                                        <div style="display: block">
+                                        <h:inputText value="#{StatisticalQuestionBean.currentPlugin.endDateText}" validatorMessage="#{msgs.statistics_wrong_date_format}" >
+                                                <f:validateRegex pattern="^([0-9]{4}-[0-9]{1,2}-[0-9]{1,2})?$" ></f:validateRegex>
+                                                
+                                                <f:passThroughAttribute
+                                                    name="placeholder"
+                                                    value="YYYY-MM-DD" />
+                                            </h:inputText>
+<!-- 
+                                        <p:calendar
+                                            id="cal02"
+                                            value="#{StatisticalQuestionBean.currentPlugin.endDate}"
+                                            pattern="yyyy-MM-dd"
+                                           >
+                                            <f:passThroughAttribute
+                                                name="placeholder"
+                                                value="YYYY-MM-DD" />
+                                            <f:passThroughAttribute
+                                                name="autocomplete"
+                                                value="off" />
+                                                <p:ajax event="change" />
+                                        </p:calendar>
+ -->                                          
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <h:outputLabel
+                                            for="field03"
+                                            styleClass="control-label"
+                                            value="#{msgs.einheit}" />
+                                        <h:selectOneMenu
+                                            id="field03"
+                                            value="#{StatisticalQuestionBean.currentPlugin.timeRange}"
+                                            styleClass="form-control">
+                                            <f:selectItem
+                                                itemValue="'%Y-%m-%d'"
+                                                itemLabel="#{msgs.days}" />
+                                            <f:selectItem
+                                                itemValue="'%Y-%m'"
+                                                itemLabel="#{msgs.months}" />
+                                            <f:selectItem
+                                                itemValue="concat(YEAR(BearbeitungsEnde),'/',QUARTER(BearbeitungsEnde))"
+                                                itemLabel="#{msgs.quarters}" />
+                                            <f:selectItem
+                                                itemValue="'%Y'"
+                                                itemLabel="#{msgs.years}" />
+
+                                        </h:selectOneMenu>
+                                    </div>
+                                </div>
+                            </div>
                             <!-- Generate the statistics or cancel again -->
                             <div class="form-actions">
                                 <h:commandButton
@@ -51,12 +143,9 @@
                                     title="#{msgs.calculateStatistics}"
                                     action="#{StatisticalQuestionBean.currentPlugin.resetStatistics}"
                                     value="#{msgs.abbrechen}">
-                                    <f:ajax
-                                        execute="@form"
-                                        render="@form"></f:ajax>
+                                    
                                 </h:commandButton>
                             </div>
-
                             <!-- ###################### // input form ###################### -->
 
                         </div>
@@ -90,12 +179,14 @@
                                         styleClass="table table-hover table-nomargin dataTable table-bordered responsive"
                                         var="item"
                                         value="#{StatisticalQuestionBean.currentPlugin.resultList}">
+                                        <!-- 
                                         <h:column>
                                             <f:facet name="header">
                                                 <h:outputText value="#{msgs.rawValue}" />
                                             </f:facet>
                                             <h:outputText value="#{item}" />
                                         </h:column>
+                                         -->
                                         <h:column>
                                             <f:facet name="header">
                                                 <h:outputText value="#{msgs.pages}" />
@@ -124,6 +215,16 @@
                                 <!-- ###################### // result table ###################### -->
 
                             </div>
+                                <div class="form-actions">
+                                <h:commandButton
+                                    styleClass="btn btn-primary  pull-right font-size-s margin-bottom-most"
+                                    id="excelDownload"
+                                    type="submit"
+                                    title="#{msgs.download_excel}"
+                                    action="#{StatisticalQuestionBean.currentPlugin.generateExcelDownload}"
+                                    value="#{msgs.download_excel}">
+                                </h:commandButton>
+                                </div>
                         </div>
                     </div>
                 </div>
