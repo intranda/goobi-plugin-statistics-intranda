@@ -36,7 +36,7 @@ public class FinishedStepsPerYearPlugin implements IStatisticPlugin {
     private String title = "plugin_intranda_statistics_finishedStepsPerYear";
     private String gui = "/uii/statistics_finishedStepsPerYear.xhtml";
     private List<FinishedStepsPerYearType> resultList = new ArrayList<>();
-    private List<String> stepnames = new ArrayList<>();
+    private List<String> myStepnames = new ArrayList<>();
     private Future<List<String>> futureStepnames;
 
     private String filter;
@@ -77,17 +77,18 @@ public class FinishedStepsPerYearPlugin implements IStatisticPlugin {
         };
         ExecutorService service = Executors.newSingleThreadExecutor();
         futureStepnames = service.submit(callable);
+        service.shutdown();
     }
 
     public List<String> getStepnames() {
-        if (stepnames == null) {
+        if (myStepnames.isEmpty()) {
             try {
-                stepnames = futureStepnames.get(10, TimeUnit.SECONDS);
+                myStepnames = futureStepnames.get(10, TimeUnit.SECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 log.error(e);
             }
         }
-        return stepnames;
+        return myStepnames;
     }
 
     @Override
@@ -130,7 +131,7 @@ public class FinishedStepsPerYearPlugin implements IStatisticPlugin {
      */
     public List<SelectItem> getSelectableSteps() {
         List<SelectItem> list = new ArrayList<SelectItem>();
-        for (String s : stepnames) {
+        for (String s : getStepnames()) {
             list.add(new SelectItem(s, s, null));
         }
         return list;
