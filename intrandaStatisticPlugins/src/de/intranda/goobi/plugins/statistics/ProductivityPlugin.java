@@ -25,10 +25,9 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.ControllingManager;
 import lombok.Data;
 import lombok.extern.log4j.Log4j;
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @Data
-@PluginImplementation
+//@PluginImplementation
 @Log4j
 public class ProductivityPlugin implements IStatisticPlugin {
 
@@ -127,11 +126,9 @@ public class ProductivityPlugin implements IStatisticPlugin {
         sb.append(timeRange);
         sb.append(") ");
 
-
         resultList = ControllingManager.getResultsAsMaps(sb.toString());
 
     }
-
 
     public void generateExcelDownload() {
         if (resultList.isEmpty()) {
@@ -148,7 +145,7 @@ public class ProductivityPlugin implements IStatisticPlugin {
         int columnCounter = 0;
         for (String headerName : columnHeader) {
             headerRow.createCell(columnCounter).setCellValue(headerName);
-            columnCounter = columnCounter +1;
+            columnCounter = columnCounter + 1;
         }
 
         int rowCounter = 1;
@@ -157,10 +154,10 @@ public class ProductivityPlugin implements IStatisticPlugin {
             Row resultRow = sheet.createRow(rowCounter);
             columnCounter = 0;
             for (String headerName : columnHeader) {
-                resultRow .createCell(columnCounter).setCellValue(result.get(headerName));
-                columnCounter = columnCounter +1;
+                resultRow.createCell(columnCounter).setCellValue(result.get(headerName));
+                columnCounter = columnCounter + 1;
             }
-            rowCounter = rowCounter +1;
+            rowCounter = rowCounter + 1;
         }
 
         // write result into output stream
@@ -194,14 +191,14 @@ public class ProductivityPlugin implements IStatisticPlugin {
         endDateText = value;
     }
 
-    public String getStartDateAsString( ) {
+    public String getStartDateAsString() {
         if (startDate != null) {
             return dateFormat.format(startDate);
         }
         return null;
     }
 
-    public String getEndDateAsString( ) {
+    public String getEndDateAsString() {
         if (endDate != null) {
             return dateFormat.format(endDate);
         }
