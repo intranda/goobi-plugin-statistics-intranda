@@ -1,19 +1,43 @@
 package de.intranda.goobi.plugins.statistics.util;
 
+/**
+ * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. - https://goobi.io - https://www.intranda.com - https://github.com/intranda/goobi
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 public class StatisticsHelper {
-	
-	/**
-	 * generate a human readable file size for bytes
-	 * 
-	 * @param bytes the input size to calculate
-	 * @param basis define if the size shall be calculated with 1000 or 1024 bytes, true means 1000
-	 * @return String with readable size
-	 */
-	public static String humanReadableByteCount(long bytes, boolean basis) {
-	    int unit = basis ? 1000 : 1024;
-	    if (bytes < unit) return bytes + " B";
-	    int exp = (int) (Math.log(bytes) / Math.log(unit));
-	    String pre = (basis ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (basis ? "" : "i");
-	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
-	}
+
+    /**
+     * generate a human readable file size for bytes
+     * 
+     * @param bytes the input size to calculate
+     * @param basis define if the size shall be calculated with 1000 or 1024 bytes, true means 1000
+     * @return String with readable size
+     */
+    public static String humanReadableByteCount(long bytes, boolean basis) {
+        int unit = basis ? 1000 : 1024;
+        if (bytes < unit) {
+            return bytes + " B";
+        }
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (basis ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (basis ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
 }

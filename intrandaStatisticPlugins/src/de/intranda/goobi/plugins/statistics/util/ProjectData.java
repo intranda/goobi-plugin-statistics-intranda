@@ -1,5 +1,30 @@
 package de.intranda.goobi.plugins.statistics.util;
 
+/**
+ * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ *          - https://goobi.io
+ *          - https://www.intranda.com
+ *          - https://github.com/intranda/goobi
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,13 +37,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sf.jxls.exception.ParsePropertyException;
-import net.sf.jxls.transformer.XLSTransformer;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -34,17 +55,16 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
-
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-
 import com.lowagie.text.pdf.PdfWriter;
 
-import de.intranda.goobi.PluginInfo;
 import de.intranda.goobi.plugins.statistics.OpenStepsPerProjectPlugin;
 import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.StepManager;
+import net.sf.jxls.exception.ParsePropertyException;
+import net.sf.jxls.transformer.XLSTransformer;
 
 public class ProjectData {
     private static final Logger logger = Logger.getLogger(OpenStepsPerProjectPlugin.class);
@@ -60,7 +80,7 @@ public class ProjectData {
 
     private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xls";
 
-//    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
+    //    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
 
     public boolean isSelected() {
         return selected;
@@ -83,18 +103,17 @@ public class ProjectData {
         String filterString = FilterHelper.criteriaBuilder("\"project:" + project.getTitel() + "\"", false, null, null, null, true, false);
         List<Step> stepList = null;
 
-        stepList =
-                StepManager.getSteps("Reihenfolge", " (bearbeitungsstatus = " + status + ") AND schritte.ProzesseID in (select ProzesseID from prozesse where "
-                        + filterString + ")");
+        stepList = StepManager.getSteps("Reihenfolge",
+                " (bearbeitungsstatus = " + status + ") AND schritte.ProzesseID in (select ProzesseID from prozesse where " + filterString + ")");
 
-//        stepList =
-//                StepManager.getSteps(null, " (bearbeitungsstatus != 3) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
-//                        + filterString + ")");
+        //        stepList =
+        //                StepManager.getSteps(null, " (bearbeitungsstatus != 3) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
+        //                        + filterString + ")");
 
         Map<String, Integer> counter = new LinkedHashMap<String, Integer>();
 
         for (Step step : stepList) {
-        	//System.out.println(step.getTitel());
+            //System.out.println(step.getTitel());
             if (counter.containsKey(step.getTitel())) {
                 counter.put(step.getTitel(), counter.get(step.getTitel()) + 1);
             } else {
