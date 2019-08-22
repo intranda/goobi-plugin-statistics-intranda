@@ -4,22 +4,26 @@
 	<artifactId>intranda-default</artifactId>
 	<version>1.0.0</version>
 	<packaging>pom</packaging>
-    <modules>
-        <module>module-gui</module>
-        <module>module-main</module>
-    </modules>
+
+	<modules>
+	    <module>module-gui</module>
+	    <module>module-main</module>
+	</modules>
+
 	<distributionManagement>
 		<repository>
 			<id>intranda-releases</id>
 			<url>https://nexus.intranda.com/repository/maven-releases</url>
 		</repository>
 	</distributionManagement>
+
 	<repositories>
 		<repository>
 			<id>intranda-public</id>
 			<url>https://nexus.intranda.com/repository/maven-public</url>
 		</repository>
 	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>de.intranda.goobi.workflow</groupId>
