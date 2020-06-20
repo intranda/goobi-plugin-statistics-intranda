@@ -87,4 +87,4 @@
             </configuration>
         </plugin></plugins>
 	</build>
-<scm><url>scm:git:ssh://git@gitea.intranda.com:goobi-workflow/goobi-plugin-controlling-intranda.git</url><connection>scm:git:ssh://git@gitea.intranda.com:goobi-workflow/goobi-plugin-controlling-intranda.git</connection></scm></project>
+<scm><url>scm:git:ssh://git@gitea.intranda.com:goobi-workflow/goobi-plugin-statistics-intranda.git</url><connection>scm:git:ssh://git@gitea.intranda.com:goobi-workflow/goobi-plugin-statistics-intranda.git</connection></scm></project>

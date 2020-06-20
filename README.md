@@ -8,9 +8,9 @@ More information about the functionality of this plugin and the complete documen
 
 Detail | Description
 --- | ---
-**Plugin identifier**       | goobi-plugin-controlling-intranda
+**Plugin identifier**       | goobi-plugin-statistics-intranda
 **Plugin type**             | step
-**Documentation (German)**  | https://docs.intranda.com/
+**Documentation (German)**  | https://docs.goobi.io/
 **Documentation (English)** | - still to be translated -
 
 ## Goobi details
@@ -33,4 +33,3 @@ Contact | Details
 **Address**       | Bertha-von-Suttner-Str. 9, 37085 Göttingen, Germany
 **Web site**      | https://www.intranda.com
 **Twitter**       | https://twitter.com/intranda
-
