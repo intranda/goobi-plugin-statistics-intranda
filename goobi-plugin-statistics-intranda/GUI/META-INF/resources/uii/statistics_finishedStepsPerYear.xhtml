@@ -14,24 +14,24 @@
     <composite:implementation>
 		
 		<script src="template/js/Chart.bundle.min.js"></script>
-		
+		<main>
 		<h:form id="statisticplugin" styleClass="form-horizontal form-bordered">
 				
             <div class="row">
                 <div class="col-sm-12">
                     <div class="box box-color blue box-bordered">
                         <div class="box-title">
-                            <h3>
+                            <h2>
                                 <i class="glyphicon-compass box-icon-fix"></i>
                                 <h:outputText value="#{msgs.auswahl2}" />
-                            </h3>
+                            </h2>
                         </div>
                         <div class="box-content nopadding">
 
 	                        <!-- ###################### input form ###################### -->
                            
                            <!-- Filter -->
-                              <intranda:formInputDropDown id="filter" name="filter" label="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_step}"
+                              <intranda:formInputDropDown id="filter" name="filtername" pt:aria-label="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_step}" label="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_step}"
 								field="#{StatisticalQuestionBean.currentPlugin.filter}"
 								selectItems="#{StatisticalQuestionBean.currentPlugin.selectableSteps}" 
 								required="true"
@@ -165,7 +165,7 @@
 				}
 			</style>
         </h:form>
-
+    </main>
     </composite:implementation>
 
 </ui:composition>
