@@ -16,17 +16,18 @@
 		<script src="template/js/plugins/flot/jquery.flot.stack.js"></script>
 		<script src="template/js/plugins/flot/jquery.flot.JUMlib.js"></script>
 		<script src="template/js/plugins/flot/jquery.flot.spider.js"></script>
-
+        
+        <main>
 		<h:form id="statisticplugin" prependId="false">
-
+        
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="box box-color lightgrey box-bordered">
 						<div class="box-title">
-							<h3>
+							<h2>
 								<i class="glyphicon-compass box-icon-fix"></i>
 								<h:outputText value="#{msgs.statisticsSelectProject}" />
-							</h3>
+							</h2>
 						</div>
 						<div class="box-content">
 							<div class="row">
@@ -40,7 +41,7 @@
 											<f:facet name="header">
 												<h:outputText value="#{msgs.auswahl2}" />
 											</f:facet>
-											<h:selectBooleanCheckbox value="#{projectData.selected}" />
+											<h:selectBooleanCheckbox pt:aria-label="#{msgs.statisticsSelectProject}" value="#{projectData.selected}" />
 										</x:column>
 
 										<x:column>
@@ -220,6 +221,7 @@
 			</div>
 			
 		</h:form>
+        </main>
 	</composite:implementation>
 
 </ui:composition>

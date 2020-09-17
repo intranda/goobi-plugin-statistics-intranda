@@ -149,10 +149,12 @@ public class UserGroupProjectData {
         data = writer.toString();
 
     }
+    
 
     private static String getRandomColor() {
         String possibleValues = "0123456789ABCDEF";
         String hexCode = "#";
+    	hexCode = "#";
         for (int i = 0; i <= 5; i++) {
             int index = (int) (Math.random() * 15);
             hexCode += possibleValues.charAt(index);

@@ -136,6 +136,52 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
 
     }
 
+    private static double[] hexToRgb(String hexColor) {
+    	
+    	double red = Integer.parseInt(hexColor.substring(1,3),16);
+    	double green = Integer.parseInt(hexColor.substring(3,5),16);
+    	double blue = Integer.parseInt(hexColor.substring(5,7),16);
+    	
+    	double[] rgb = {red, green, blue};
+    	
+    	for(int i = 0; i <= 2; i++) {
+    		rgb[i] = rgb[i]/255;
+    		if(rgb[i] <= 0.03928) {
+    			rgb[i] = rgb[i] / 12.92;
+    		}else {
+    			rgb[i] = Math.pow(((rgb[i]+0.055)/1.055),2.4);
+    		}
+    	}
+    	
+    	return rgb;
+    }
+    
+    private static Boolean checkContrast(String hexColor, String backgroundHexColor) {
+    	
+    	double[] oneRGB = hexToRgb(hexColor);
+    	double[] twoRGB = hexToRgb(backgroundHexColor);
+    	
+    	double L1 = 0.2126 * oneRGB[0] + 0.7152 * oneRGB[1] + 0.0722 * oneRGB[2];
+    	double L2 = 0.2126 * twoRGB[0] + 0.7152 * twoRGB[1] + 0.0722 * twoRGB[2];
+    	
+    	double contrast = 0;
+    	
+    	if(L1 >= L2) {
+    		contrast = (L1 + 0.05) / (L2 + 0.05);
+    	}else {
+    		contrast = (L2 + 0.05) / (L1 + 0.05);
+    	}
+    	
+    	System.out.println(contrast);
+    	
+    	if(contrast >= 4.5) {
+    		System.out.println("Final: "+contrast);
+    		return true;
+    	}else {
+    		return false;
+    	}
+    }
+
     private static String getRandomColor() {
         String possibleValues = "0123456789ABCDEF";
         String hexCode = "#";
@@ -143,6 +189,14 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
             int index = (int) (Math.random() * 15);
             hexCode += possibleValues.charAt(index);
         }
+        do {
+        	hexCode = "#";
+	        for (int i = 0; i <= 5; i++) {
+	            int index = (int) (Math.random() * 15);
+	            hexCode += possibleValues.charAt(index);
+	            
+	        }
+        } while(checkContrast(hexCode, "#FFFFFF") != true);
         return hexCode;
     }
 

@@ -13,24 +13,24 @@
 
     <composite:implementation>
 
-
+<main>
 <h:form id="statisticplugin" styleClass="form-horizontal form-bordered">
 					
 	            <div class="row">
 	                <div class="col-sm-12">
 	                    <div class="box box-color blue box-bordered">
 	                        <div class="box-title">
-	                            <h3>
+	                            <h2>
 	                                <i class="glyphicon-compass box-icon-fix"></i>
 	                                <h:outputText value="#{msgs.auswahl2}" />
-	                            </h3>
+	                            </h2>
 	                        </div>
 	                        <div class="box-content nopadding">
 	
 		                        <!-- ###################### input form ###################### -->
 	                           
 	                           <!-- Filter -->
-                                <intranda:formInputText id="filter" name="filter" label="#{msgs.filter}" field="#{StatisticalQuestionBean.currentPlugin.filter}" help="#{msgs.helpFilter}" fieldStyle="form-control" required="false"  />
+                                <intranda:formInputText id="filter" name="filtername" label="#{msgs.filter}" field="#{StatisticalQuestionBean.currentPlugin.filter}" help="#{msgs.helpFilter}" fieldStyle="form-control" required="false"  />
 	                                    
 	                            <!-- Generate the statistics or cancel again -->
 		                        <div class="form-actions">
@@ -165,7 +165,7 @@
 					}
 				</style>
 	        </h:form>
-
+    </main>
     </composite:implementation>
 
 </ui:composition>
