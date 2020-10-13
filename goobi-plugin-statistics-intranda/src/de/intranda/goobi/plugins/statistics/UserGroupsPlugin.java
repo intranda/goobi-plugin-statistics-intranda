@@ -172,10 +172,10 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
     		contrast = (L2 + 0.05) / (L1 + 0.05);
     	}
     	
-    	System.out.println(contrast);
+    	//System.out.println(contrast);
     	
     	if(contrast >= 4.5) {
-    		System.out.println("Final: "+contrast);
+    		//System.out.println("Final: "+contrast);
     		return true;
     	}else {
     		return false;
