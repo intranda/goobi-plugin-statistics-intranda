@@ -1,6 +1,6 @@
-# Goobi workflow Plugin: goobi-plugin-controlling-intranda
+# Goobi workflow Plugin: goobi-plugin-statistics-intranda
 
-This plugin adds controlling functionality to Goobi workflow.
+This plugin adds basic statistics functionality to Goobi workflow.
 
 ## Plugin details
 
