@@ -6,7 +6,8 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:x="http://myfaces.apache.org/tomahawk"
     xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
-    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
 
     <composite:interface>
     </composite:interface>
@@ -79,34 +80,34 @@
 									
 									            <ul class="dropdown-menu">
 									                <li>
-									                    <h:commandLink action="#{NavigationForm.Reload}" id="limitResults10">
+									                    <button class="dropdown-item" jsf:action="#{NavigationForm.Reload}" jsf:id="limitResults10">
 									                        <h:outputText value="#{msgs.goobiScript_setMaxEntries} 10" />
 									                        <x:updateActionListener property="#{SessionForm.gsm.showMax}" value="10" />
-									                    </h:commandLink>
+									                    </button>
 									                </li>
 									                <li>
-									                    <h:commandLink action="#{NavigationForm.Reload}" id="limitResults100">
+									                    <button class="dropdown-item" jsf:action="#{NavigationForm.Reload}" jsf:id="limitResults100">
 									                        <h:outputText value="#{msgs.goobiScript_setMaxEntries} 100" />
 									                        <x:updateActionListener property="#{SessionForm.gsm.showMax}" value="100" />
-									                    </h:commandLink>
+									                    </button>
 									                </li>
 									                <li>
-									                    <h:commandLink action="#{NavigationForm.Reload}" id="limitResults1000">
+									                    <button class="dropdown-item" jsf:action="#{NavigationForm.Reload}" jsf:id="limitResults1000">
 									                        <h:outputText value="#{msgs.goobiScript_setMaxEntries} 1.000" />
 									                        <x:updateActionListener property="#{SessionForm.gsm.showMax}" value="1000" />
-									                    </h:commandLink>
+									                    </button>
 									                </li>
 									                <li>
-									                    <h:commandLink action="#{NavigationForm.Reload}" id="limitResults10000">
+									                    <button class="dropdown-item" jsf:action="#{NavigationForm.Reload}" jsf:id="limitResults10000">
 									                        <h:outputText value="#{msgs.goobiScript_setMaxEntries} 10.000" />
 									                        <x:updateActionListener property="#{SessionForm.gsm.showMax}" value="10000" />
-									                    </h:commandLink>
+									                    </button>
 									                </li>
 									                <li>
-									                    <h:commandLink action="#{NavigationForm.Reload}" id="limitResults1000000">
+									                    <button class="dropdown-item" jsf:action="#{NavigationForm.Reload}" jsf:id="limitResults1000000">
 									                        <h:outputText value="#{msgs.goobiScript_setMaxEntries} 1.000.000" />
 									                        <x:updateActionListener property="#{SessionForm.gsm.showMax}" value="1000000" />
-									                    </h:commandLink>
+									                    </button>
 									                </li>
 									            </ul>
 									            
