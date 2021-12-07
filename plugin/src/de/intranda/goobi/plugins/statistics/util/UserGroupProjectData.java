@@ -3,7 +3,7 @@ package de.intranda.goobi.plugins.statistics.util;
 /**
  * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
+ * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi
@@ -26,7 +26,6 @@ package de.intranda.goobi.plugins.statistics.util;
  * exception statement from your version.
  */
 import java.awt.Color;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,11 +42,13 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.goobi.beans.Project;
 import org.goobi.beans.Step;
 import org.goobi.beans.Usergroup;
 import org.goobi.production.flow.statistics.hibernate.FilterHelper;
+import org.jxls.common.Context;
+import org.jxls.transform.Transformer;
+import org.jxls.util.JxlsHelper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.Document;
@@ -65,8 +66,6 @@ import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.StepManager;
 import de.sub.goobi.persistence.managers.UsergroupManager;
-import net.sf.jxls.exception.ParsePropertyException;
-import net.sf.jxls.transformer.XLSTransformer;
 
 public class UserGroupProjectData {
 
@@ -80,7 +79,7 @@ public class UserGroupProjectData {
     private String data;
 
     private String title = "";
-    private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xls";
+    private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xlsx";
 
     //    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
 
@@ -110,7 +109,7 @@ public class UserGroupProjectData {
                     " (bearbeitungsstatus = 1) AND schritte.ProzesseID in (select ProzesseID from prozesse where " + filterString + ")");
         }
 
-        Map<String, Integer> counter = new LinkedHashMap<String, Integer>();
+        Map<String, Integer> counter = new LinkedHashMap<>();
 
         for (Step step : stepList) {
             //System.out.println(step.getTitel());
@@ -124,7 +123,7 @@ public class UserGroupProjectData {
             }
         }
 
-        list = new ArrayList<PieType>();
+        list = new ArrayList<>();
 
         for (String groupName : counter.keySet()) {
             int value = counter.get(groupName);
@@ -149,12 +148,11 @@ public class UserGroupProjectData {
         data = writer.toString();
 
     }
-    
 
     private static String getRandomColor() {
         String possibleValues = "0123456789ABCDEF";
         String hexCode = "#";
-    	hexCode = "#";
+        hexCode = "#";
         for (int i = 0; i <= 5; i++) {
             int index = (int) (Math.random() * 15);
             hexCode += possibleValues.charAt(index);
@@ -188,43 +186,32 @@ public class UserGroupProjectData {
 
     public void createExcelFile() {
         try {
-            File tempFile = File.createTempFile("test", ".xls");
 
-            Map<String, List<PieType>> map = new HashMap<>();
-            map.put("groups", list);
+            Map<String, List<PieType>> model = new HashMap<>();
+            model.put("groups", list);
+            InputStream is = new FileInputStream(XLS_TEMPLATE_NAME);
 
-            XLSTransformer transformer = new XLSTransformer();
-            transformer.markAsFixedSizeCollection("groups");
+            FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
 
-            transformer.transformXLS(XLS_TEMPLATE_NAME, map, tempFile.getAbsolutePath());
-
-            if (tempFile.exists()) {
-                FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
-
-                HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-                OutputStream out = response.getOutputStream();
-                response.setContentType("application/vnd.ms-excel");
-                response.setHeader("Content-Disposition", "attachment;filename=\"export.xls\"");
-                byte[] buf = new byte[8192];
-
-                InputStream is = new FileInputStream(tempFile);
-
-                int c = 0;
-
-                while ((c = is.read(buf, 0, buf.length)) > 0) {
-                    out.write(buf, 0, c);
-                    out.flush();
+            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+            OutputStream out = response.getOutputStream();
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Content-Disposition", "attachment;filename=\"export.xlsx\"");
+            Context context = new Context();
+            if (model != null) {
+                for (String key : model.keySet()) {
+                    context.putVar(key, model.get(key));
                 }
-
-                out.flush();
-                is.close();
-                facesContext.responseComplete();
-
-                tempFile.delete();
-
             }
+            JxlsHelper jxlsHelper = JxlsHelper.getInstance();
+            Transformer transformer = jxlsHelper.createTransformer(is, out);
 
-        } catch (ParsePropertyException | InvalidFormatException | IOException e) {
+            jxlsHelper.processTemplate(context, transformer);
+            out.flush();
+            is.close();
+            facesContext.responseComplete();
+
+        } catch (IOException e) {
             logger.error(e);
         }
 

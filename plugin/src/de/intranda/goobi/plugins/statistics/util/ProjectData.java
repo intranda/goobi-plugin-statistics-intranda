@@ -1,31 +1,5 @@
 package de.intranda.goobi.plugins.statistics.util;
 
-/**
- * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
- *          - https://goobi.io
- *          - https://www.intranda.com
- *          - https://github.com/intranda/goobi
- * 
- * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
- * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
- * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
- * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
- * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
- * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
- * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
- * exception statement from your version.
- */
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,10 +16,12 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.goobi.beans.Project;
 import org.goobi.beans.Step;
 import org.goobi.production.flow.statistics.hibernate.FilterHelper;
+import org.jxls.common.Context;
+import org.jxls.transform.Transformer;
+import org.jxls.util.JxlsHelper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.Document;
@@ -63,8 +39,6 @@ import de.intranda.goobi.plugins.statistics.OpenStepsPerProjectPlugin;
 import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.StepManager;
-import net.sf.jxls.exception.ParsePropertyException;
-import net.sf.jxls.transformer.XLSTransformer;
 
 public class ProjectData {
     private static final Logger logger = Logger.getLogger(OpenStepsPerProjectPlugin.class);
@@ -78,7 +52,7 @@ public class ProjectData {
 
     private String title;
 
-    private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xls";
+    private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xlsx";
 
     //    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
 
@@ -110,7 +84,7 @@ public class ProjectData {
         //                StepManager.getSteps(null, " (bearbeitungsstatus != 3) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
         //                        + filterString + ")");
 
-        Map<String, Integer> counter = new LinkedHashMap<String, Integer>();
+        Map<String, Integer> counter = new LinkedHashMap<>();
 
         for (Step step : stepList) {
             //System.out.println(step.getTitel());
@@ -122,7 +96,7 @@ public class ProjectData {
 
         }
 
-        list = new ArrayList<PieType>();
+        list = new ArrayList<>();
 
         for (String stepName : counter.keySet()) {
             int value = counter.get(stepName);
@@ -156,7 +130,7 @@ public class ProjectData {
         return hexCode;
     }
     //    public void calculateUserGroupAssignment() {
-    //        
+    //
     //        String filterString = FilterHelper.criteriaBuilder("project:" + project.getTitel(), false, null, null, null, true, false);
     //        List<Step> stepList = null;
     //        if (filterString == null || filterString.length() == 0) {
@@ -204,7 +178,7 @@ public class ProjectData {
     //        }
     //
     //        data = writer.toString();
-    //        
+    //
     //    }
 
     public List<PieType> getList() {
@@ -225,43 +199,59 @@ public class ProjectData {
 
     public void createExcelFile() {
         try {
-            File tempFile = File.createTempFile("test", ".xls");
 
-            Map<String, List<PieType>> map = new HashMap<>();
-            map.put("groups", list);
 
-            XLSTransformer transformer = new XLSTransformer();
-            transformer.markAsFixedSizeCollection("groups");
+            Map<String, List<PieType>> model = new HashMap<>();
+            model.put("groups", list);
+            InputStream is = new FileInputStream(XLS_TEMPLATE_NAME);
 
-            transformer.transformXLS(XLS_TEMPLATE_NAME, map, tempFile.getAbsolutePath());
 
-            if (tempFile.exists()) {
-                FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
+            FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
+            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+            OutputStream out = response.getOutputStream();
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Content-Disposition", "attachment;filename=\"export.xlsx\"");
 
-                HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-                OutputStream out = response.getOutputStream();
-                response.setContentType("application/vnd.ms-excel");
-                response.setHeader("Content-Disposition", "attachment;filename=\"export.xls\"");
-                byte[] buf = new byte[8192];
 
-                InputStream is = new FileInputStream(tempFile);
 
-                int c = 0;
-
-                while ((c = is.read(buf, 0, buf.length)) > 0) {
-                    out.write(buf, 0, c);
-                    out.flush();
+            Context context = new Context ();
+            if (model!= null) {
+                for (String key: model.keySet ()) {
+                    context.putVar (key, model.get (key));
                 }
-
-                out.flush();
-                is.close();
-                facesContext.responseComplete();
-
-                tempFile.delete();
-
             }
+            JxlsHelper jxlsHelper = JxlsHelper.getInstance ();
+            Transformer transformer = jxlsHelper.createTransformer (is, out);
 
-        } catch (ParsePropertyException | InvalidFormatException | IOException e) {
+            jxlsHelper.processTemplate (context, transformer);
+
+
+
+            //            XLSTransformer transformer = new XLSTransformer();
+            //            transformer.markAsFixedSizeCollection("groups");
+
+            //            transformer.transformXLS(XLS_TEMPLATE_NAME, map, tempFile.getAbsolutePath());
+
+            //
+            //                byte[] buf = new byte[8192];
+            //
+            //
+            //
+            //                int c = 0;
+            //
+            //                while ((c = is.read(buf, 0, buf.length)) > 0) {
+            //                    out.write(buf, 0, c);
+            //                    out.flush();
+            //                }
+            //
+            out.flush();
+            is.close();
+            facesContext.responseComplete();
+
+
+
+
+        } catch (  IOException e) {
             logger.error(e);
         }
 
@@ -348,18 +338,18 @@ public class ProjectData {
     //            table.getDefaultCell().setBorder(Rectangle.BOX);
     //            table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
     //            table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
-    //           
+    //
     //
     //            PdfPCell cell1 = new PdfPCell(new Paragraph(Helper.getTranslation("benutzergruppe"),new Font(BaseFont.createFont(), 11)));
     //            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
     //            cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
     //            cell1.setMinimumHeight(25f);
-    //            
+    //
     //            PdfPCell cell2 = new PdfPCell(new Paragraph(Helper.getTranslation("count"),new Font(BaseFont.createFont(), 11)));
     //            cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
     //            cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
     //            cell2.setMinimumHeight(25f);
-    //            
+    //
     //            table.addCell(cell1);
     //            table.addCell(cell2);
     //
@@ -369,7 +359,7 @@ public class ProjectData {
     //            	tc.setVerticalAlignment(Element.ALIGN_TOP);
     //            	tc.setMinimumHeight(18f);
     //            	table.addCell(tc);
-    //            	
+    //
     //            	PdfPCell tc2 = new PdfPCell(new Paragraph(pt.getData() + "",new Font(BaseFont.createFont(), 10)));
     //            	tc2.setHorizontalAlignment(Element.ALIGN_LEFT);
     //               	tc2.setVerticalAlignment(Element.ALIGN_TOP);
@@ -386,7 +376,7 @@ public class ProjectData {
     //            PdfContentByte content = pdfStamper.getOverContent(1);
     //            content.addTemplate(page, 0, 0);
     //            content.setFontAndSize(BaseFont.createFont(), 9);
-    //            
+    //
     //            table.setHeaderRows(1);
     //            table.setTotalWidth(510);
     //
