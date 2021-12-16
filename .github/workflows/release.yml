@@ -62,13 +62,13 @@ jobs:
         asset_path: plugin/statistics_template.pdf
         asset_name: statistics_template.pdf
         asset_content_type: application/pdf
-    - name: Upload XLS template
-      id: upload-xls-template
+    - name: Upload XLSX template
+      id: upload-xlsx-template
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: plugin/statistics_template.xls
-        asset_name: statistics_template.xls
+        asset_path: plugin/statistics_template.xlsx
+        asset_name: statistics_template.xlsx
         asset_content_type: application/vnd.ms-excel
