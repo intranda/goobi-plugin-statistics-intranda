@@ -42,12 +42,12 @@ import de.intranda.goobi.plugins.statistics.util.StatisticsHelper;
 import de.intranda.goobi.plugins.statistics.util.StoragePerProjectType;
 import de.sub.goobi.persistence.managers.MySQLHelper;
 import lombok.Data;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @Data
 @PluginImplementation
-@Log4j
+@Log4j2
 public class StoragePerProcessPlugin implements IStatisticPlugin {
 
     private PluginType type = PluginType.Statistics;

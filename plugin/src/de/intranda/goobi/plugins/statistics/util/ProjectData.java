@@ -39,17 +39,14 @@ import de.intranda.goobi.plugins.statistics.OpenStepsPerProjectPlugin;
 import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.StepManager;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class ProjectData {
-    private static final Logger logger = Logger.getLogger(OpenStepsPerProjectPlugin.class);
-
     private boolean selected = false;
-
     private Project project;
-
     private List<PieType> list;
     private String data;
-
     private String title;
 
     private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xlsx";
@@ -113,7 +110,7 @@ public class ProjectData {
         try {
             mapper.writeValue(writer, list);
         } catch (IOException e) {
-            logger.error(e);
+            log.error(e);
         }
 
         data = writer.toString();
@@ -247,12 +244,8 @@ public class ProjectData {
             out.flush();
             is.close();
             facesContext.responseComplete();
-
-
-
-
         } catch (  IOException e) {
-            logger.error(e);
+            log.error(e);
         }
 
     }
@@ -268,19 +261,16 @@ public class ProjectData {
 
             Document document = new Document();
             PdfWriter.getInstance(document, out);
-
             document.open();
 
             PdfPTable table = createTable();
-
             document.add(table);
-
             document.close();
 
             out.flush();
             facesContext.responseComplete();
         } catch (IOException | DocumentException e) {
-            logger.error(e);
+            log.error(e);
         }
     }
 

@@ -49,12 +49,12 @@ import org.goobi.production.plugin.interfaces.IStatisticPlugin;
 import de.intranda.goobi.plugins.statistics.util.FinishedStepsPerYearType;
 import de.sub.goobi.persistence.managers.MySQLHelper;
 import lombok.Data;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @Data
 @PluginImplementation
-@Log4j
+@Log4j2
 public class FinishedStepsPerYearPlugin implements IStatisticPlugin {
 
     private PluginType type = PluginType.Statistics;

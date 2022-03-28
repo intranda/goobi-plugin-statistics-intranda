@@ -49,11 +49,11 @@ import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.ControllingManager;
 import lombok.Data;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 
 @Data
 //@PluginImplementation
-@Log4j
+@Log4j2
 public class ProductivityPlugin implements IStatisticPlugin {
 
     private PluginType type = PluginType.Statistics;

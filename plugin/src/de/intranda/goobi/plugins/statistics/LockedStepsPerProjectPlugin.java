@@ -29,22 +29,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.goobi.beans.Project;
 import org.goobi.production.plugin.interfaces.AbstractStatisticsPlugin;
 import org.goobi.production.plugin.interfaces.IStatisticPlugin;
 
 import de.intranda.goobi.plugins.statistics.util.ProjectData;
 import de.sub.goobi.persistence.managers.ProjectManager;
+import lombok.extern.log4j.Log4j2;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
+@Log4j2
 public class LockedStepsPerProjectPlugin extends AbstractStatisticsPlugin implements IStatisticPlugin {
 
     private static final String PLUGIN_TITLE = "intranda_statistics_lockedStepsPerProject";
-
-    private static final Logger logger = Logger.getLogger(LockedStepsPerProjectPlugin.class);
-
     private List<ProjectData> projectDataList = new ArrayList<ProjectData>();
 
     public void initProjectData() {
@@ -63,9 +61,7 @@ public class LockedStepsPerProjectPlugin extends AbstractStatisticsPlugin implem
 
         for (ProjectData pd : projectDataList) {
             if (pd.isSelected()) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Calculating data for project " + pd.getProject().getTitel());
-                }
+                log.debug("Calculating data for project " + pd.getProject().getTitel());
                 pd.calculateSteps(0);
             }
         }

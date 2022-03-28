@@ -15,7 +15,6 @@ import java.util.TreeMap;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.goobi.beans.Step;
 import org.goobi.beans.Usergroup;
 import org.goobi.production.flow.statistics.hibernate.FilterHelper;
@@ -42,21 +41,19 @@ import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.StepManager;
 import de.sub.goobi.persistence.managers.UsergroupManager;
+import lombok.extern.log4j.Log4j2;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
+@Log4j2
 public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStatisticPlugin {
 
     private static final String PLUGIN_TITLE = "intranda_statistics_userGroups";
-
-    private static final Logger logger = Logger.getLogger(UserGroupsPlugin.class);
-
     private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xlsx";
 
     //    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
 
     private List<PieType> list;
-
     private String data;
 
     @Override
@@ -103,7 +100,7 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
         try {
             mapper.writeValue(writer, list);
         } catch (IOException e) {
-            logger.error(e);
+            log.error(e);
         }
 
         data = writer.toString();
@@ -239,7 +236,7 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
             facesContext.responseComplete();
 
         } catch (IOException e) {
-            logger.error(e);
+            log.error(e);
         }
 
     }
@@ -305,7 +302,7 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
             out.flush();
             facesContext.responseComplete();
         } catch (IOException | DocumentException e) {
-            logger.error(e);
+            log.error(e);
         }
     }
 

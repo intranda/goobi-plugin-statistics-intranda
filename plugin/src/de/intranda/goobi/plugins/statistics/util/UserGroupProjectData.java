@@ -41,7 +41,6 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.goobi.beans.Project;
 import org.goobi.beans.Step;
 import org.goobi.beans.Usergroup;
@@ -66,18 +65,15 @@ import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.StepManager;
 import de.sub.goobi.persistence.managers.UsergroupManager;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class UserGroupProjectData {
 
-    private static final Logger logger = Logger.getLogger(UserGroupProjectData.class);
-
     private boolean selected = false;
-
     private Project project;
-
     private List<PieType> list;
     private String data;
-
     private String title = "";
     private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xlsx";
 
@@ -127,13 +123,11 @@ public class UserGroupProjectData {
 
         for (String groupName : counter.keySet()) {
             int value = counter.get(groupName);
-
             PieType type = new PieType();
             type.setLabel(groupName);
             type.setData(value);
             type.setColor(getRandomColor());
             list.add(type);
-
         }
 
         StringWriter writer = new StringWriter();
@@ -142,7 +136,7 @@ public class UserGroupProjectData {
         try {
             mapper.writeValue(writer, list);
         } catch (IOException e) {
-            logger.error(e);
+            log.error(e);
         }
 
         data = writer.toString();
@@ -192,7 +186,6 @@ public class UserGroupProjectData {
             InputStream is = new FileInputStream(XLS_TEMPLATE_NAME);
 
             FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
-
             HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
             OutputStream out = response.getOutputStream();
             response.setContentType("application/vnd.ms-excel");
@@ -212,7 +205,7 @@ public class UserGroupProjectData {
             facesContext.responseComplete();
 
         } catch (IOException e) {
-            logger.error(e);
+            log.error(e);
         }
 
     }
@@ -287,19 +280,16 @@ public class UserGroupProjectData {
 
             Document document = new Document();
             PdfWriter.getInstance(document, out);
-
             document.open();
 
             PdfPTable table = createTable();
-
             document.add(table);
-
             document.close();
 
             out.flush();
             facesContext.responseComplete();
         } catch (IOException | DocumentException e) {
-            logger.error(e);
+            log.error(e);
         }
     }
 

@@ -29,21 +29,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.goobi.beans.Project;
 import org.goobi.production.plugin.interfaces.AbstractStatisticsPlugin;
 import org.goobi.production.plugin.interfaces.IStatisticPlugin;
 
 import de.intranda.goobi.plugins.statistics.util.UserGroupProjectData;
 import de.sub.goobi.persistence.managers.ProjectManager;
+import lombok.extern.log4j.Log4j2;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
+@Log4j2
 public class UserGroupsPerProjectPlugin extends AbstractStatisticsPlugin implements IStatisticPlugin {
 
     private static final String PLUGIN_TITLE = "intranda_statistics_userGroupsPerProject";
-
-    private static final Logger logger = Logger.getLogger(UserGroupsPerProjectPlugin.class);
 
     //    private List<PieType> list;
     //
@@ -67,9 +66,7 @@ public class UserGroupsPerProjectPlugin extends AbstractStatisticsPlugin impleme
 
         for (UserGroupProjectData pd : projectDataList) {
             if (pd.isSelected()) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Calculating data for project " + pd.getProject().getTitel());
-                }
+                log.debug("Calculating data for project " + pd.getProject().getTitel());
                 pd.calculate();
             }
         }
