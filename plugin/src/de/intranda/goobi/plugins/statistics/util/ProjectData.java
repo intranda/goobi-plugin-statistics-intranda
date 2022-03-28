@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.goobi.beans.Project;
 import org.goobi.beans.Step;
 import org.goobi.production.flow.statistics.hibernate.FilterHelper;
@@ -35,7 +34,6 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
-import de.intranda.goobi.plugins.statistics.OpenStepsPerProjectPlugin;
 import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.StepManager;
