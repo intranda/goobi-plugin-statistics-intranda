@@ -195,54 +195,30 @@ public class ProjectData {
     public void createExcelFile() {
         try {
 
-
             Map<String, List<PieType>> model = new HashMap<>();
             model.put("groups", list);
-            InputStream is = new FileInputStream(XLS_TEMPLATE_NAME);
+            try (InputStream is = new FileInputStream(XLS_TEMPLATE_NAME)) {
 
+                FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
+                HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+                OutputStream out = response.getOutputStream();
+                response.setContentType("application/vnd.ms-excel");
+                response.setHeader("Content-Disposition", "attachment;filename=\"export.xlsx\"");
 
-            FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
-            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-            OutputStream out = response.getOutputStream();
-            response.setContentType("application/vnd.ms-excel");
-            response.setHeader("Content-Disposition", "attachment;filename=\"export.xlsx\"");
-
-
-
-            Context context = new Context ();
-            if (model!= null) {
-                for (String key: model.keySet ()) {
-                    context.putVar (key, model.get (key));
+                Context context = new Context();
+                for (String key : model.keySet()) {
+                    context.putVar(key, model.get(key));
                 }
+
+                JxlsHelper jxlsHelper = JxlsHelper.getInstance();
+                Transformer transformer = jxlsHelper.createTransformer(is, out);
+
+                jxlsHelper.processTemplate(context, transformer);
+
+                out.flush();
+                facesContext.responseComplete();
             }
-            JxlsHelper jxlsHelper = JxlsHelper.getInstance ();
-            Transformer transformer = jxlsHelper.createTransformer (is, out);
-
-            jxlsHelper.processTemplate (context, transformer);
-
-
-
-            //            XLSTransformer transformer = new XLSTransformer();
-            //            transformer.markAsFixedSizeCollection("groups");
-
-            //            transformer.transformXLS(XLS_TEMPLATE_NAME, map, tempFile.getAbsolutePath());
-
-            //
-            //                byte[] buf = new byte[8192];
-            //
-            //
-            //
-            //                int c = 0;
-            //
-            //                while ((c = is.read(buf, 0, buf.length)) > 0) {
-            //                    out.write(buf, 0, c);
-            //                    out.flush();
-            //                }
-            //
-            out.flush();
-            is.close();
-            facesContext.responseComplete();
-        } catch (  IOException e) {
+        } catch (IOException e) {
             log.error(e);
         }
 

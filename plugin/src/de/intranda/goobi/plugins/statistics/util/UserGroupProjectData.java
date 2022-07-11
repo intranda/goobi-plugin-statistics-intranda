@@ -183,27 +183,24 @@ public class UserGroupProjectData {
 
             Map<String, List<PieType>> model = new HashMap<>();
             model.put("groups", list);
-            InputStream is = new FileInputStream(XLS_TEMPLATE_NAME);
+            try (InputStream is = new FileInputStream(XLS_TEMPLATE_NAME)) {
 
-            FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
-            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-            OutputStream out = response.getOutputStream();
-            response.setContentType("application/vnd.ms-excel");
-            response.setHeader("Content-Disposition", "attachment;filename=\"export.xlsx\"");
-            Context context = new Context();
-            if (model != null) {
+                FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
+                HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+                OutputStream out = response.getOutputStream();
+                response.setContentType("application/vnd.ms-excel");
+                response.setHeader("Content-Disposition", "attachment;filename=\"export.xlsx\"");
+                Context context = new Context();
                 for (String key : model.keySet()) {
                     context.putVar(key, model.get(key));
                 }
+                JxlsHelper jxlsHelper = JxlsHelper.getInstance();
+                Transformer transformer = jxlsHelper.createTransformer(is, out);
+
+                jxlsHelper.processTemplate(context, transformer);
+                out.flush();
+                facesContext.responseComplete();
             }
-            JxlsHelper jxlsHelper = JxlsHelper.getInstance();
-            Transformer transformer = jxlsHelper.createTransformer(is, out);
-
-            jxlsHelper.processTemplate(context, transformer);
-            out.flush();
-            is.close();
-            facesContext.responseComplete();
-
         } catch (IOException e) {
             log.error(e);
         }

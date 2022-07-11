@@ -51,8 +51,6 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
     private static final String PLUGIN_TITLE = "intranda_statistics_userGroups";
     private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xlsx";
 
-    //    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
-
     private List<PieType> list;
     private String data;
 
@@ -143,10 +141,7 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
             contrast = (L2 + 0.05) / (L1 + 0.05);
         }
 
-        //System.out.println(contrast);
-
         if (contrast >= 4.5) {
-            //System.out.println("Final: "+contrast);
             return true;
         } else {
             return false;
@@ -213,27 +208,25 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
 
             Map<String, List<PieType>> model = new HashMap<>();
             model.put("groups", list);
-            InputStream is = new FileInputStream(XLS_TEMPLATE_NAME);
+            try (InputStream is = new FileInputStream(XLS_TEMPLATE_NAME)) {
 
-            FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
+                FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
 
-            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-            OutputStream out = response.getOutputStream();
-            response.setContentType("application/vnd.ms-excel");
-            response.setHeader("Content-Disposition", "attachment;filename=\"export.xlsx\"");
-            Context context = new Context();
-            if (model != null) {
+                HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+                OutputStream out = response.getOutputStream();
+                response.setContentType("application/vnd.ms-excel");
+                response.setHeader("Content-Disposition", "attachment;filename=\"export.xlsx\"");
+                Context context = new Context();
                 for (String key : model.keySet()) {
                     context.putVar(key, model.get(key));
                 }
-            }
-            JxlsHelper jxlsHelper = JxlsHelper.getInstance();
-            Transformer transformer = jxlsHelper.createTransformer(is, out);
+                JxlsHelper jxlsHelper = JxlsHelper.getInstance();
+                Transformer transformer = jxlsHelper.createTransformer(is, out);
 
-            jxlsHelper.processTemplate(context, transformer);
-            out.flush();
-            is.close();
-            facesContext.responseComplete();
+                jxlsHelper.processTemplate(context, transformer);
+                out.flush();
+                facesContext.responseComplete();
+            }
 
         } catch (IOException e) {
             log.error(e);
@@ -306,72 +299,6 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
         }
     }
 
-    //    public void createPdfFile() {
-    //        try {
-    //            FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
-    //
-    //            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-    //            OutputStream out = response.getOutputStream();
-    //            response.setContentType("application/pdf");
-    //            response.setHeader("Content-Disposition", "attachment;filename=\"export.pdf\"");
-    //
-    //            PdfPTable table = new PdfPTable(2);
-    //
-    //            table.getDefaultCell().setBorder(Rectangle.BOX);
-    //            table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-    //            table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
-    //
-    //            PdfPCell cell1 = new PdfPCell(new Paragraph(Helper.getTranslation("benutzergruppe"),new Font(BaseFont.createFont(), 11)));
-    //            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-    //            cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-    //            cell1.setMinimumHeight(25f);
-    //
-    //            PdfPCell cell2 = new PdfPCell(new Paragraph(Helper.getTranslation("count"),new Font(BaseFont.createFont(), 11)));
-    //            cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
-    //            cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
-    //            cell2.setMinimumHeight(25f);
-    //
-    //            table.addCell(cell1);
-    //            table.addCell(cell2);
-    //
-    //            for (PieType pt : list) {
-    //            	PdfPCell tc = new PdfPCell(new Paragraph(pt.getLabel(),new Font(BaseFont.createFont(), 10)));
-    //               	tc.setHorizontalAlignment(Element.ALIGN_LEFT);
-    //            	tc.setVerticalAlignment(Element.ALIGN_TOP);
-    //            	tc.setMinimumHeight(18f);
-    //              	table.addCell(tc);
-    //
-    //              	PdfPCell tc2 = new PdfPCell(new Paragraph(pt.getData() + "",new Font(BaseFont.createFont(), 10)));
-    //            	tc2.setHorizontalAlignment(Element.ALIGN_LEFT);
-    //               	tc2.setVerticalAlignment(Element.ALIGN_TOP);
-    //            	tc2.setMinimumHeight(18f);
-    //            	table.addCell(tc2);
-    //            }
-    //
-    //            PdfReader pdfReader = new PdfReader(PDF_TEMPLATE_NAME);
-    //            PdfStamper pdfStamper = new PdfStamper(pdfReader, out);
-    //
-    //            PdfImportedPage page = pdfStamper.getImportedPage(pdfReader, 1);
-    //
-    //            PdfContentByte content = pdfStamper.getOverContent(1);
-    //            content.addTemplate(page, 0, 0);
-    //
-    //            table.setHeaderRows(1);
-    //            table.setTotalWidth(510);
-    //
-    //            Paragraph p = new Paragraph(Helper.getTranslation(PLUGIN_TITLE), new Font(BaseFont.createFont(), 14));
-    //            ColumnText.showTextAligned(content, Element.ALIGN_LEFT, p, 40, 750, 0);
-    //
-    //            table.writeSelectedRows(0, -1, 40, 730, content);
-    //
-    //            pdfStamper.close();
-    //            pdfReader.close();
-    //            out.flush();
-    //            facesContext.responseComplete();
-    //        } catch (IOException | DocumentException e) {
-    //            logger.error(e);
-    //        }
-    //    }
 
     @Override
     public boolean getPermissions() {
