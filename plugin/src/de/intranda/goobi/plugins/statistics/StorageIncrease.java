@@ -3,7 +3,7 @@ package de.intranda.goobi.plugins.statistics;
 /**
  * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
+ * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi
@@ -67,7 +67,7 @@ public class StorageIncrease extends AbstractStatisticsPlugin implements IStatis
     @Override
     public void calculate() {
 
-        List<Integer> IDlist = ProcessManager.getIDList(filter);
+        List<Integer> IDlist = ProcessManager.getIdsForFilter(filter);
         String natSQL = StatisticsFactory.getStorage(this.startDate, this.endDate, this.targetTimeUnit, IDlist).getSQL();
 
         @SuppressWarnings("rawtypes")
@@ -75,12 +75,12 @@ public class StorageIncrease extends AbstractStatisticsPlugin implements IStatis
 
         //        List<Map<Integer, Double>> value = new ArrayList<Map<Integer, Double>>();
 
-        //        min: 0, ticks: [[0, ""], [1, "hello"], [2, "hi"], [3,"helloagain"]], max: 3 
+        //        min: 0, ticks: [[0, ""], [1, "hello"], [2, "hi"], [3,"helloagain"]], max: 3
         StringBuilder rawData = new StringBuilder();
         StringBuilder rawAxis = new StringBuilder();
         rawAxis.append("[");
         //        rawAxis.append("[0, \"\"],");
-        //        "min: 0, max: " + list.size() + ", ticks: 
+        //        "min: 0, max: " + list.size() + ", ticks:
         rawData.append("[");
         //        rawData.append("[0, \"\"],");
         max = list.size();
