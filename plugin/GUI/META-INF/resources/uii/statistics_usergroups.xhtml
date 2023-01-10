@@ -1,8 +1,14 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:composite="http://xmlns.jcp.org/jsf/composite" xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:x="http://myfaces.apache.org/tomahawk"
-	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
-	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough" xmlns:jsf="http://xmlns.jcp.org/jsf">
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:composite="http://xmlns.jcp.org/jsf/composite"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:x="http://myfaces.apache.org/tomahawk"
+	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/compositesPG"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+>
 
 	<composite:interface>
 	</composite:interface>
@@ -16,35 +22,39 @@
 		<script src="template/js/plugins/flot/jquery.flot.stack.js"></script>
 		<script src="template/js/plugins/flot/jquery.flot.JUMlib.js"></script>
 		<script src="template/js/plugins/flot/jquery.flot.spider.js"></script>
-        
-        <main>
-		<h:form id="statisticplugin">
-			
 
+    <main id="statisticsUsergroups">
+		<h:form id="statisticplugin">
 
 			<div class="row">
-				<div class="col-sm-12">
-					<div class="box box-color lightgrey box-bordered">
-						<div class="box-title">
-							<h2>
-								<i class="fa fa-pie-chart"></i>
-								<h:outputText value="#{msgs[StatisticalQuestionBean.currentPlugin.title]}" />
-							</h2>
-						</div>
-						<div class="box-content">
+				<div class="col-12">
+
+					<intranda:box
+						id="boxStatisticUsergroup"
+						boxType="neutral"
+						title="#{msgs[StatisticalQuestionBean.currentPlugin.title]}"
+						icon="fa-pie-chart"
+					>
+
 							<h:inputText value="#{StatisticalQuestionBean.data}" id="datafield" style="display:none" />
 
-							<div class="col-sm-7">
-								<x:commandButton id="myStatisticButton" title="#{msgs.calculateStatistics}"
-									value="#{msgs.calculateStatistics}" action="#{StatisticalQuestionBean.calculate}"
-									styleClass="btn btn-primary">
+							<div class="col-7">
+								<x:commandLink
+									id="myStatisticButton"
+									type="button"
+									title="#{msgs.calculateStatistics}"
+									value="#{msgs.calculateStatistics}"
+									action="#{StatisticalQuestionBean.calculate}"
+									styleClass="btn btn-neutral-600">
+
 									<f:ajax execute="@form" render="@form"></f:ajax>
-								</x:commandButton>
+
+								</x:commandLink>
 								<div id="placeholder" class='flot' style="min-height: 450px;"></div>
 							</div>
 
-							<div class="col-sm-5">
-								<table class="table table-hover table-bordered" style="border: 1px solid #ddd;">
+							<div class="col-5">
+								<table class="table table-hover table-bordered">
 									<ui:repeat var="datarow" value="#{StatisticalQuestionBean.currentPlugin.dataList}">
 										<tr>
 											<td><i class="fa fa-square" style="color:#{datarow.color}"></i></td>
@@ -53,31 +63,41 @@
 										</tr>
 									</ui:repeat>
 								</table>
-								<br />
-								<button jsf:action="#{StatisticalQuestionBean.currentPlugin.createExcelFile}" class="expandbutton margin-bottom-10"
-									jsf:rendered="#{StatisticalQuestionBean.data != null}">
-									<span class="btn margin-right-10 fa fa-file-excel-o" />
-                                            <h:outputText value="#{msgs.createExcel}" />
-								</button>
-								<br />
-								<button jsf:action="#{StatisticalQuestionBean.currentPlugin.createPdfFile}" class="expandbutton"
-									jsf:rendered="#{StatisticalQuestionBean.data != null}">
-									
-									<span class="btn margin-right-10 fa fa-file-pdf-o" />
+
+								<div class="box__actions justify-content-start">
+									<button
+										jsf:action="#{StatisticalQuestionBean.currentPlugin.createExcelFile}"
+										class="btn btn-blank expandbutton"
+										jsf:rendered="#{StatisticalQuestionBean.data != null}">
+										<i class="fa fa-file-excel-o" />
+										<span>
+											<h:outputText value="#{msgs.createExcel}" />
+										</span>
+									</button>
+									<br />
+									<button
+										jsf:action="#{StatisticalQuestionBean.currentPlugin.createPdfFile}"
+										class="btn btn-blank"
+										jsf:rendered="#{StatisticalQuestionBean.data != null}">
+
+										<i class="fa fa-file-pdf-o" />
+										<span>
 											<h:outputText value="#{msgs.createPdf}" />
-								</button>
+										</span>
+									</button>
+								</div>
+
 							</div>
 
-						</div>
-					</div>
-				</div>
+				</intranda:box>
 			</div>
+		</div>
 		</h:form>
 
 		<script type="text/javascript">
 			function plotTable() {
 				var data = $.parseJSON(document
-						.getElementById('statisticplugin:datafield').value);
+						.getElementById('statisticplugin:boxStatisticUsergroup:datafield').value);
 				function plotWithOptions() {
 
 					$.plot('#placeholder', data, {
