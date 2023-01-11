@@ -1,172 +1,189 @@
 <ui:composition
+
+
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:composite="http://xmlns.jcp.org/jsf/composite"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:x="http://myfaces.apache.org/tomahawk"
-    xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
+    xmlns:intranda="http://xmlns.jcp.org/jsf/composite/compositesPG"
     xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
     <composite:interface>
     </composite:interface>
 
     <composite:implementation>
-		
+
 		<script src="template/js/Chart.bundle.min.js"></script>
-		<main>
+		<main id="statisticsFinishedTasksPerYear">
 		<h:form id="statisticplugin" styleClass="form-horizontal form-bordered">
-				
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="box box-color blue box-bordered">
-                        <div class="box-title">
-                            <h2>
-                                <i class="glyphicon-compass box-icon-fix"></i>
-                                <h:outputText value="#{msgs.auswahl2}" />
-                            </h2>
-                        </div>
-                        <div class="box-content nopadding">
 
-	                        <!-- ###################### input form ###################### -->
-                           
-                           <!-- Filter -->
-                              <intranda:formInputDropDown id="filter" name="filtername" pt:aria-label="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_step}" label="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_step}"
-								field="#{StatisticalQuestionBean.currentPlugin.filter}"
-								selectItems="#{StatisticalQuestionBean.currentPlugin.selectableSteps}" 
-								required="true"
-								fieldStyle="form-control" />
-                            
-                            <!-- Generate the statistics or cancel again -->
-	                        <div class="form-actions">
-							    <h:commandButton styleClass="btn btn-primary submitOnEnter pull-right font-size-s margin-bottom-most" id="myStatisticButton" type="submit"
-	                            		title="#{msgs.calculateStatistics}" action="#{StatisticalQuestionBean.calculate}" value="#{msgs.calculateStatistics}">
-	                            </h:commandButton>
-							</div>
-                           	
-	                        <!-- ###################### // input form ###################### -->
+		<div class="row">
+			<div class="col-12">
 
-                        </div>                        
-                    </div>
-                </div>
-            </div>
+				<intranda:box
+					boxType="primary"
+					boxForm="true"
+					boxPadding="false"
+					icon="fa-compass"
+					title="#{msgs.auswahl2}"
+				>
 
-			<h:panelGroup rendered="#{StatisticalQuestionBean.currentPlugin.resultList != null and StatisticalQuestionBean.currentPlugin.resultList.size() gt 0}">
-				<div class="row">
-	                <div class="col-sm-12">
-	                    <div class="box box-color lightgrey box-bordered">
-	                        <div class="box-title">
-	                            <h3>
-	                                <i class="fa fa-pie-chart"></i>
-	                                <h:outputText value="#{msgs[StatisticalQuestionBean.currentPlugin.title]}" />
-	                            </h3>
-	                        </div>
-	                        <div class="box-content nopadding">
-	                        	
-	                        	<!-- ###################### result table ###################### -->
-	                        	
-	                        	<div class="dataTables_wrapper">
-										
-									<!-- Datentabelle -->
-									<x:dataTable id="results" styleClass="table table-hover table-nomargin dataTable table-bordered responsive" var="item" value="#{StatisticalQuestionBean.currentPlugin.resultList}">
-	
-										<h:column>
-											<f:facet name="header">
-												<h:outputText value="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_year}" />
-											</f:facet>
-											<h:outputText value="#{item.year}" />
-										</h:column>
-										<h:column>
-											<f:facet name="header">
-												<i class="fa fa-square" style="color:#4AC748; margin-right:5px;"></i>
-												<h:outputText value="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_processes}" />
-											</f:facet>
-											<h:outputText value="#{item.processes}" />
-										</h:column>
-										<h:column>
-											<f:facet name="header">
-												<i class="fa fa-square" style="color:#AE41E8; margin-right:5px;"></i>
-												<h:outputText value="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_images}" />
-											</f:facet>
-											<h:outputText value="#{item.images}" />
-										</h:column>
-										
-									</x:dataTable>
-	
-									
-	
-								</div>
-	                        	
-	                        	<!-- ###################### // result table ###################### -->
-	                        	
-	 						</div>
-	                    </div>
-	                </div>
-	            </div>
-	            
-	            <!-- ###################### chart ###################### -->
-	            <div class="row">
-	                <div class="col-sm-12">
-	                    <div class="box box-light box-bordered">
-	                        <div class="box-title">
-	                            <h3>
-	                                <i class="fa fa-pie-chart"></i>
-	                                <h:outputText value="#{msgs[StatisticalQuestionBean.currentPlugin.title]}" />
-	                            </h3>
-	                        </div>
-	                        <div class="box-content ">
-	                        	
-		                        	<div height="400px" style="margin-top:0px;">
-									<canvas id="myChart" width="400px" height="400px"></canvas>
-								</div>
-	                        	
-	                        		<script type="text/javascript">
-									var ctx = document.getElementById("myChart").getContext('2d');
-									var myChart = new Chart(ctx, {
-									    type: 'horizontalBar',
-									    data: {
-									        labels: [#{StatisticalQuestionBean.currentPlugin.chartLabels}],
-									        datasets: [
-									        {
-									        		label: "#{msgs.plugin_intranda_statistics_finishedStepsPerYear_processes}",
-									        		data: [#{StatisticalQuestionBean.currentPlugin.chartValuesProcesses}],
-									        		backgroundColor: "#4AC748"
-									        },
-									        {
-								        			label: "#{msgs.plugin_intranda_statistics_finishedStepsPerYear_images}",
-								            		data: [#{StatisticalQuestionBean.currentPlugin.chartValuesImages}],
-								            		backgroundColor: "#AE41E8"
-								        		}]
-									    },
-									    options: {
-									    		legend: {
-									            display: true,
-									         	position: 'bottom'
-									        },
-									        responsive: true,
-									        maintainAspectRatio: false
-									        
-									    }
-									});
-								</script>
-	                        	
-	 						</div>
-	                    </div>
-	                </div>
-	            </div>
-	            <!-- ###################### // chart ###################### -->
-          
-          		
-		    </h:panelGroup>
+					 <!-- Filter -->
+					<intranda:formInputDropDown
+						id="filter"
+						name="filtername"
+						pt:aria-label="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_step}"
+						label="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_step}"
+						field="#{StatisticalQuestionBean.currentPlugin.filter}"
+						selectItems="#{StatisticalQuestionBean.currentPlugin.selectableSteps}"
+						required="true"
+						fieldStyle="form-select"
+					/>
 
-            <style>
-            	.box.box-bordered .table.table-bordered {
-    				border-right: 1px solid #ddd;
-				}
-			</style>
-        </h:form>
-    </main>
-    </composite:implementation>
+
+					<!-- Generate the statistics or cancel again -->
+					<div class="box__actions">
+						<h:commandButton
+							styleClass="btn btn-primary"
+							id="myStatisticButton"
+							type="submit"
+							title="#{msgs.calculateStatistics}"
+							action="#{StatisticalQuestionBean.calculate}"
+							value="#{msgs.calculateStatistics}"
+						>
+						</h:commandButton>
+					</div>
+
+
+				</intranda:box>
+			</div>
+		</div>
+
+		<h:panelGroup rendered="#{StatisticalQuestionBean.currentPlugin.resultList != null and StatisticalQuestionBean.currentPlugin.resultList.size() gt 0}">
+			<div class="row mt-4">
+				<div class="col-12">
+
+					<intranda:box
+						boxType="neutral"
+						boxPadding="false"
+						icon="fa-pie-chart"
+						title="#{msgs[StatisticalQuestionBean.currentPlugin.title]}"
+					>
+
+					<!-- ###################### result table ###################### -->
+
+					<div class="gw-table gw-table-fixed">
+						<div class="gw-table__wrapper">
+
+							<!-- Datentabelle -->
+							<x:dataTable
+								id="results"
+								styleClass="table table-hover table-bordered"
+								var="item"
+								value="#{StatisticalQuestionBean.currentPlugin.resultList}"
+							>
+
+								<h:column>
+									<f:facet name="header">
+								<h:outputText value="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_year}" />
+								</f:facet>
+								<h:outputText value="#{item.year}" />
+								</h:column>
+								<h:column>
+									<f:facet name="header">
+									<i class="fa fa-square fa-square--processes me-2"></i>
+									<h:outputText value="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_processes}" />
+								</f:facet>
+								<h:outputText value="#{item.processes}" />
+								</h:column>
+								<h:column>
+									<f:facet name="header">
+									<i class="fa fa-square fa-square--images me-2"></i>
+									<h:outputText value="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_images}" />
+								</f:facet>
+									<h:outputText value="#{item.images}" />
+								</h:column>
+
+							</x:dataTable>
+
+						</div> <!--/.col-12-->
+					</div> <!--/.row-->
+
+					<!-- ###################### // result table ###################### -->
+
+					</intranda:box>
+
+				</div>
+			</div>
+
+			<!-- ###################### chart ###################### -->
+			<div class="row mt-4">
+				<div class="col-12">
+
+					<intranda:box
+						boxType="outline"
+						icon="fa-pie-chart"
+						title="#{msgs[StatisticalQuestionBean.currentPlugin.title]}"
+					>
+
+
+						<div height="400px" style="margin-top:0px;">
+							<canvas id="myChart" width="400px" height="400px"></canvas>
+						</div>
+
+						<script type="text/javascript">
+
+							// Get color vals from css
+							var statsView = document.querySelector('#statisticsFinishedTasksPerYear')
+							var style = getComputedStyle(statsView);
+							var clrStats400 = style.getPropertyValue('--gw-clr-stats-400');
+							var clrStats600 = style.getPropertyValue('--gw-clr-stats-600');
+
+							var chartData=
+								{
+									labels: [#{StatisticalQuestionBean.currentPlugin.chartLabels}],
+									datasets: [
+										{
+											label: "#{msgs.plugin_intranda_statistics_finishedStepsPerYear_processes}",
+											data: [#{StatisticalQuestionBean.currentPlugin.chartValuesProcesses}],
+											backgroundColor: clrStats600,
+										},
+										{
+											label: "#{msgs.plugin_intranda_statistics_finishedStepsPerYear_images}",
+											data: [#{StatisticalQuestionBean.currentPlugin.chartValuesImages}],
+											backgroundColor: clrStats400,
+										}]
+								}
+
+							var ctx = document.getElementById("myChart").getContext('2d');
+							var myChart = new Chart(ctx, {
+								type: 'horizontalBar',
+								data: chartData,
+								options: {
+									legend: {
+										display: true,
+										position: 'bottom'
+									},
+									responsive: true,
+									maintainAspectRatio: false
+
+								}
+							});
+						</script>
+
+				</intranda:box>
+			</div> <!--/.col-12-->
+		</div> <!--/.row-->
+
+		<!-- ###################### // chart ###################### -->
+
+	</h:panelGroup>
+
+	</h:form>
+</main>
+</composite:implementation>
 
 </ui:composition>
 
