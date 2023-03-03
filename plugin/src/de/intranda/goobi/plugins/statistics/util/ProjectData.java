@@ -73,7 +73,8 @@ public class ProjectData {
         List<Step> stepList = null;
 
         stepList = StepManager.getSteps("Reihenfolge",
-                " (bearbeitungsstatus = " + status + ") AND schritte.ProzesseID in (select ProzesseID from prozesse where " + filterString + ")");
+                " (bearbeitungsstatus = " + status + ") AND schritte.ProzesseID in (select ProzesseID from prozesse where " + filterString + ")",
+                null);
 
         //        stepList =
         //                StepManager.getSteps(null, " (bearbeitungsstatus != 3) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
@@ -117,12 +118,12 @@ public class ProjectData {
 
     private static String getRandomColor() {
         String possibleValues = "0123456789ABCDEF";
-        String hexCode = "#";
+        StringBuilder hexCode = new StringBuilder("#");
         for (int i = 0; i <= 5; i++) {
             int index = (int) (Math.random() * 15);
-            hexCode += possibleValues.charAt(index);
+            hexCode.append(possibleValues.charAt(index));
         }
-        return hexCode;
+        return hexCode.toString();
     }
     //    public void calculateUserGroupAssignment() {
     //
