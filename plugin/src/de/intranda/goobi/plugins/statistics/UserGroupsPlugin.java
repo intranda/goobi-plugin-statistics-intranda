@@ -59,11 +59,12 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
         String filterString = FilterHelper.criteriaBuilder(filter, false, null, null, null, true, false);
         List<Step> stepList = null;
         if (filterString == null || filterString.length() == 0) {
-            stepList = StepManager.getSteps(null, " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2)  ");
+            stepList = StepManager.getSteps(null, " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2)  ", null);
         } else {
             stepList = StepManager.getSteps(null,
                     " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
-                            + filterString + ")");
+                            + filterString + ")",
+                    null);
         }
 
         Map<String, Integer> counter = new TreeMap<>();
@@ -298,7 +299,6 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
             log.error(e);
         }
     }
-
 
     @Override
     public boolean getPermissions() {
