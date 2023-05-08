@@ -1,194 +1,233 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:composite="http://xmlns.jcp.org/jsf/composite" xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:x="http://myfaces.apache.org/tomahawk"
-	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
-	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:composite="http://xmlns.jcp.org/jsf/composite"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:x="http://myfaces.apache.org/tomahawk"
+	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/compositesPG"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+>
 
-	<composite:interface>
-	</composite:interface>
+<composite:interface>
+</composite:interface>
 
-	<composite:implementation>
+<composite:implementation>
 
-		<script src="template/js/plugins/flot/jquery.flot.js"></script>
-		<script src="template/js/plugins/flot/jquery.flot.bar.order.min.js"></script>
-		<script src="template/js/plugins/flot/jquery.flot.pie.min.js"></script>
-		<script src="template/js/plugins/flot/jquery.flot.resize.min.js"></script>
-		<script src="template/js/plugins/flot/jquery.flot.stack.js"></script>
-		<script src="template/js/plugins/flot/jquery.flot.JUMlib.js"></script>
-		<script src="template/js/plugins/flot/jquery.flot.spider.js"></script>
+<script src="template/js/plugins/flot/jquery.flot.js"></script>
+<script src="template/js/plugins/flot/jquery.flot.bar.order.min.js"></script>
+<script src="template/js/plugins/flot/jquery.flot.pie.min.js"></script>
+<script src="template/js/plugins/flot/jquery.flot.resize.min.js"></script>
+<script src="template/js/plugins/flot/jquery.flot.stack.js"></script>
+<script src="template/js/plugins/flot/jquery.flot.JUMlib.js"></script>
+<script src="template/js/plugins/flot/jquery.flot.spider.js"></script>
 
-		<style>
-#flot-4 div.xAxis div.tickLabel {
-	transform: rotate(-90deg);
-	-ms-transform: rotate(-90deg); /* IE 9 */
-	-moz-transform: rotate(-90deg); /* Firefox */
-	-webkit-transform: rotate(-90deg); /* Safari and Chrome */
-	-o-transform: rotate(-90deg); /* Opera */
-	rotation-point: 100% 50%; /* CSS3 */
-	rotation: 270deg; /* CSS3 */
-	margin-top: 20px;
+<style>
+/* If w/h not set, jquery throws an error when plotting a chart */
+.flot {
+	width: 100%;
+	height: 300px;
 }
 </style>
-<main>
+
+<main id="statisticsStorageIncrease">
+
 		<div class="row">
-			<div class="col-sm-12">
-				<div class="box box-color lightgrey box-bordered">
-					<div class="box-title">
-						<h2>
-							<i class="fa fa-pie-chart"></i>
-							<h:outputText value="#{msgs[StatisticalQuestionBean.currentPlugin.title]}" />
-						</h2>
+			<div class="col-12">
+
+				<intranda:box
+					id="statisticsStorageIncreaseBox"
+					boxType="neutral"
+					title="#{msgs[StatisticalQuestionBean.currentPlugin.title]}"
+					icon="fa-pie-chart"
+				>
+
+				<h:form id="statisticplugin" rendered="#{NavigationForm.aktuell == 'a41'}">
+
+				<div class="row">
+
+					<div class="col-12 col-md-3">
+							<h:outputLabel
+								for="cal01a"
+								styleClass="control-label"
+								value="#{msgs.zeitraum} #{msgs.from}" />
+							<h:panelGroup style="display:block">
+							<intranda:formInputCalendar3
+								id="cal01a" name="startdate"
+								field="#{StatisticalQuestionBean.timeFilterFrom}"
+								required="false" />
+							</h:panelGroup>
 					</div>
-					<div class="box-content">
-
-						<h:form id="statisticplugin" rendered="#{NavigationForm.aktuell == 'a41'}">
-
-							<div class="row">
-
-								<div class="col-sm-3">
-									<div class="form-group">
-										<h:outputLabel for="cal01a" styleClass="control-label"
-											value="#{msgs.zeitraum} #{msgs.from}" />
-										<h:panelGroup style="display:block">
-											<intranda:formInputCalendar3 id="cal01a" name="startdate"
-												field="#{StatisticalQuestionBean.timeFilterFrom}" required="false" />
-										</h:panelGroup>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="form-group">
-										<h:outputLabel for="cal02a" styleClass="control-label" value="#{msgs.to}" />
-										<h:panelGroup style="display:block">
-											<intranda:formInputCalendar3 id="cal02a" name="enddate"
-												field="#{StatisticalQuestionBean.timeFilterTo}" required="false" />
-										</h:panelGroup>
-									</div>
-								</div>
+					<div class="col-12 col-md-3">
+							<h:outputLabel
+								for="cal02a"
+								styleClass="control-label"
+								value="#{msgs.to}" />
+							<h:panelGroup style="display:block">
+							<intranda:formInputCalendar3
+								id="cal02a"
+								name="enddate"
+								field="#{StatisticalQuestionBean.timeFilterTo}"
+								required="false" />
+							</h:panelGroup>
+					</div>
 
 
-								<div class="col-sm-3">
-									<div class="form-group">
-										<h:outputLabel for="field01a" styleClass="control-label" value="- #{msgs.orLast} -" />
-										<x:inputText id="field01a" styleClass="form-control"
-											value="#{StatisticalQuestionBean.sourceNumberOfTimeUnitsAsString}" required="false" />
-									</div>
-								</div>
+					<div class="col-12 col-md-3">
+							<h:outputLabel
+								for="field01a"
+								styleClass="control-label"
+								value="- #{msgs.orLast} -" />
+							<x:inputText
+								id="field01a"
+								styleClass="form-control"
+								value="#{StatisticalQuestionBean.sourceNumberOfTimeUnitsAsString}"
+								required="false" />
+					</div>
 
-								<div class="col-sm-3">
-									<div class="form-group">
-										<h:outputLabel for="field02a" styleClass="control-label" value="#{msgs.einheiten}" />
-										<h:selectOneMenu id="field02a" value="#{StatisticalQuestionBean.sourceTimeUnit}"
-											converter="StatisticsTimeUnitConverter" styleClass="form-control">
-											<f:selectItems value="#{StatisticalQuestionBean.allTimeUnits}" var="unit"
-												itemLabel="#{unit.title}" itemValue="#{unit}" />
-										</h:selectOneMenu>
+					<div class="col-12 col-md-3">
+							<h:outputLabel
+								for="field02a"
+								styleClass="control-label"
+								value="#{msgs.einheiten}" />
+							<h:selectOneMenu
+								id="field02a"
+								value="#{StatisticalQuestionBean.sourceTimeUnit}"
+								converter="StatisticsTimeUnitConverter"
+								styleClass="form-control">
+							<f:selectItems
+								value="#{StatisticalQuestionBean.allTimeUnits}"
+								var="unit"
+								itemLabel="#{unit.title}"
+								itemValue="#{unit}" />
+							</h:selectOneMenu>
+					</div>
 
-									</div>
-								</div>
+				</div> <!--/.row-->
 
-							</div>
-							<div class="row">
-								<div class="col-sm-3">
-									<div class="form-group">
-										<h:outputLabel for="field03a" styleClass="control-label" value="#{msgs.einheit}" />
-										<h:selectOneMenu id="field03a"
-											value="#{StatisticalQuestionBean.currentPlugin.targetTimeUnit}"
-											converter="StatisticsTimeUnitConverter" styleClass="form-control">
-											<f:selectItems value="#{StatisticalQuestionBean.allTimeUnits}" var="unit"
-												itemLabel="#{unit.title}" itemValue="#{unit}" />
-										</h:selectOneMenu>
-									</div>
-								</div>
+				<div class="row mt-4">
+					<div class="col-12 col-md-3">
+							<h:outputLabel
+								for="field03a"
+								styleClass="control-label"
+								value="#{msgs.einheit}" />
+							<h:selectOneMenu
+								id="field03a"
+								value="#{StatisticalQuestionBean.currentPlugin.targetTimeUnit}"
+								converter="StatisticsTimeUnitConverter"
+								styleClass="form-control">
+							<f:selectItems
+								value="#{StatisticalQuestionBean.allTimeUnits}"
+								var="unit"
+								itemLabel="#{unit.title}"
+								itemValue="#{unit}" />
+							</h:selectOneMenu>
+					</div>
 
-								<div class="col-sm-9">
-									<br />
-									<x:commandButton id="myStatisticButton" title="#{msgs.calculateStatistics}"
-										value="#{msgs.calculateStatistics}" action="#{StatisticalQuestionBean.calculate}"
-										styleClass="btn btn-primary pull-right">
-										<f:ajax execute="@form" render="@form"></f:ajax>
-									</x:commandButton>
-								</div>
-							</div>
-
-							<h:inputText value="#{StatisticalQuestionBean.data}" id="datafield" style="display:none" />
-							<h:inputText value="#{StatisticalQuestionBean.currentPlugin.axis}" id="axisfield"
-								style="display:none" />
-							<h:inputText value="#{StatisticalQuestionBean.currentPlugin.max}" id="maxfield"
-								style="display:none" />
-						</h:form>
-						
-						<hr/>
-
-						<div style="overflow-x: auto; height: 350px;">
-							<div id="flot-4" class='flot'></div>
-						</div>
-						<script type="text/javascript">
-							function plotTable() {
-								var data = $
-										.parseJSON(document
-												.getElementById('statisticplugin:datafield').value);
-								var maxdata = document
-										.getElementById('statisticplugin:maxfield').value;
-								var axisdata = $
-										.parseJSON(document
-												.getElementById('statisticplugin:axisfield').value);
-								$('#flot-4').css('width', maxdata * 50 + 'px');
-								function plotWithOptions() {
-									$.plot($("#flot-4"), [ data ], {
-										xaxis : {
-											min : 0,
-											ticks : axisdata,
-											max : maxdata,
-											tickSize : 30
-										},
-
-										series : {
-											stack : 0,
-											lines : {
-												show : false,
-												fill : true,
-												steps : false,
-												
-											},
-											bars : {
-												show : true,
-												barWidth : 0.8,
-												fill:.75
-											}
-
-										}
-									});
-								}
-								plotWithOptions();
-
-							}
-
-							// AJAX Eventlistener
-							jsf.ajax.addOnEvent(function(data) {
-								var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
-
-								switch (ajaxstatus) {
-								case "begin": // This is called right before ajax request is been sent.
-									break;
-
-								case "complete": // This is called right after ajax response is received.
-
-									break;
-
-								case "success": // This is called when ajax response is successfully processed.
-									// NOOP.
-									plotTable();
-									break;
-								}
-							});
-						</script>
-
+					<div class="col-12 col-md-9 d-flex mt-4">
+						<x:commandLink
+							type="button"
+							id="myStatisticButton"
+							title="#{msgs.calculateStatistics}"
+							value="#{msgs.calculateStatistics}"
+							action="#{StatisticalQuestionBean.calculate}"
+							styleClass="btn btn-neutral-600 ms-auto align-self-end">
+						<f:ajax execute="@form" render="@form"></f:ajax>
+						</x:commandLink>
 					</div>
 				</div>
+
+				<h:inputText
+					value="#{StatisticalQuestionBean.data}"
+					id="datafield"
+					style="display:none" />
+				<h:inputText
+					value="#{StatisticalQuestionBean.currentPlugin.axis}"
+					id="axisfield"
+					style="display:none" />
+				<h:inputText
+					value="#{StatisticalQuestionBean.currentPlugin.max}"
+					id="maxfield"
+					style="display:none" />
+				</h:form>
+
+				<hr/>
+
+
+				<!--jQuery flot appends a canvas here-->
+				<div id="flot-4" class='flot'></div>
+
+				<script type="text/javascript">
+					function plotTable() {
+						var data = $
+							.parseJSON(document
+								.getElementById('statisticsStorageIncreaseBox:statisticplugin:datafield').value);
+						var maxdata = document
+							.getElementById('statisticsStorageIncreaseBox:statisticplugin:maxfield').value;
+						var axisdata = $
+							.parseJSON(document
+								.getElementById('statisticsStorageIncreaseBox:statisticplugin:axisfield').value);
+
+						// Use this to set a max with for every data point
+						// $('#flot-4').css('width', maxdata * 50 + 'px');
+						function plotWithOptions() {
+							$.plot($("#flot-4"), [ data ], {
+								xaxis : {
+									min : 0,
+									ticks : axisdata,
+									max : maxdata,
+									tickSize : 30
+								},
+
+								series : {
+									stack : 0,
+									lines : {
+										show : false,
+										fill : true,
+										steps : false,
+
+									},
+									bars : {
+										show : true,
+										barWidth : 0.8,
+										fill:.75
+									}
+
+								}
+							});
+						}
+						plotWithOptions();
+
+					}
+
+					// AJAX Eventlistener
+					jsf.ajax.addOnEvent(function(data) {
+						var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
+
+						switch (ajaxstatus) {
+							case "begin": // This is called right before ajax request is been sent.
+								break;
+
+							case "complete": // This is called right after ajax response is received.
+
+								break;
+
+							case "success": // This is called when ajax response is successfully processed.
+								// NOOP.
+								plotTable();
+								break;
+						}
+					});
+				</script>
+
+
+				</intranda:box>
+
 			</div>
 		</div>
-    </main>
-	</composite:implementation>
+
+</main>
+</composite:implementation>
 
 </ui:composition>
 

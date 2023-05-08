@@ -5,7 +5,7 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:x="http://myfaces.apache.org/tomahawk"
-    xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
+    xmlns:intranda="http://xmlns.jcp.org/jsf/composite/compositesPG"
     xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
     xmlns:jsf="http://xmlns.jcp.org/jsf">
 
@@ -14,160 +14,208 @@
 
     <composite:implementation>
 
-<main>
-<h:form id="statisticplugin" styleClass="form-horizontal form-bordered">
-					
-	            <div class="row">
-	                <div class="col-sm-12">
-	                    <div class="box box-color blue box-bordered">
-	                        <div class="box-title">
-	                            <h2>
-	                                <i class="glyphicon-compass box-icon-fix"></i>
-	                                <h:outputText value="#{msgs.auswahl2}" />
-	                            </h2>
-	                        </div>
-	                        <div class="box-content nopadding">
-	
-		                        <!-- ###################### input form ###################### -->
-	                           
-	                           <!-- Filter -->
-                                <intranda:formInputText id="filter" name="filtername" label="#{msgs.filter}" field="#{StatisticalQuestionBean.currentPlugin.filter}" help="#{msgs.helpFilter}" fieldStyle="form-control" required="false"  />
-	                                    
-	                            <!-- Generate the statistics or cancel again -->
-		                        <div class="form-actions">
-								    <h:commandButton styleClass="btn btn-primary submitOnEnter pull-right font-size-s margin-bottom-most" id="myStatisticButton" type="submit"
-		                            		title="#{msgs.calculateStatistics}" action="#{StatisticalQuestionBean.calculate}" value="#{msgs.calculateStatistics}">
-		                            </h:commandButton>
-									
-<!-- 		                            <h:commandButton styleClass="btn margin-sides-10 font-size-s pull-right" id="cancel" -->
-<!-- 		                            	title="#{msgs.calculateStatistics}" action="#{StatisticalQuestionBean.currentPlugin.resetStatistics}" value="#{msgs.abbrechen}"> -->
-<!-- 		                                <f:ajax execute="@form" render="@form"></f:ajax> -->
-<!-- 		                            </h:commandButton> -->
-								</div>
-	                           	
-		                        <!-- ###################### // input form ###################### -->
-	
-	                        </div>                        
-	                    </div>
-	                </div>
-	            </div>
-	
-				<h:panelGroup rendered="#{StatisticalQuestionBean.currentPlugin.resultList != null and StatisticalQuestionBean.currentPlugin.resultList.size() gt 0}">
-					<div class="row">
-		                <div class="col-sm-12">
-		                    <div class="box box-color lightgrey box-bordered">
-		                        <div class="box-title">
-		                            <h3>
-		                                <i class="fa fa-pie-chart"></i>
-		                                <h:outputText value="#{msgs[StatisticalQuestionBean.currentPlugin.title]}" />
-		                            </h3>
-		                        </div>
-		                        <div class="box-content nopadding">
-		                        	
-		                        	<!-- ###################### result table ###################### -->
-		                        	
-		                        	<div class="dataTables_wrapper">
-											
-										<div class="dataTables_length" style="width:100%;margin-bottom:10px;">
-											<h:outputText value="#{msgs.treffer}: #{StatisticalQuestionBean.currentPlugin.resultList.size()}" />
-											<h:outputText value=" - #{msgs.goobiScript_showMax}: #{SessionForm.gsm.showMax}" styleClass="font-light margin-left-10" rendered="#{StatisticalQuestionBean.currentPlugin.resultList.size() gt SessionForm.gsm.showMax}" />
-											
-											<div class="btn-group font-size-s pull-right margin-right-10" data-toggle="tooltip" title="#{msgs.goobiScript_limitList}" style="margin-right:20px;">
-									            <button class="btn font-size-s dropdown-toggle" data-toggle="dropdown" tabindex="0" aria-label="#{msgs.goobiScript_limitList}">
-									                <i class="fa fa-table margin-right-5" />
-									                <span class="caret"></span>
-									            </button>
-									
-									            <ul class="dropdown-menu">
-									                <li>
-									                    <button class="dropdown-item" jsf:action="#{NavigationForm.Reload}" jsf:id="limitResults10">
-									                        <h:outputText value="#{msgs.goobiScript_setMaxEntries} 10" />
-									                        <x:updateActionListener property="#{SessionForm.gsm.showMax}" value="10" />
-									                    </button>
-									                </li>
-									                <li>
-									                    <button class="dropdown-item" jsf:action="#{NavigationForm.Reload}" jsf:id="limitResults100">
-									                        <h:outputText value="#{msgs.goobiScript_setMaxEntries} 100" />
-									                        <x:updateActionListener property="#{SessionForm.gsm.showMax}" value="100" />
-									                    </button>
-									                </li>
-									                <li>
-									                    <button class="dropdown-item" jsf:action="#{NavigationForm.Reload}" jsf:id="limitResults1000">
-									                        <h:outputText value="#{msgs.goobiScript_setMaxEntries} 1.000" />
-									                        <x:updateActionListener property="#{SessionForm.gsm.showMax}" value="1000" />
-									                    </button>
-									                </li>
-									                <li>
-									                    <button class="dropdown-item" jsf:action="#{NavigationForm.Reload}" jsf:id="limitResults10000">
-									                        <h:outputText value="#{msgs.goobiScript_setMaxEntries} 10.000" />
-									                        <x:updateActionListener property="#{SessionForm.gsm.showMax}" value="10000" />
-									                    </button>
-									                </li>
-									                <li>
-									                    <button class="dropdown-item" jsf:action="#{NavigationForm.Reload}" jsf:id="limitResults1000000">
-									                        <h:outputText value="#{msgs.goobiScript_setMaxEntries} 1.000.000" />
-									                        <x:updateActionListener property="#{SessionForm.gsm.showMax}" value="1000000" />
-									                    </button>
-									                </li>
-									            </ul>
-									            
-									        </div>
-									        
-											<h:outputText value="#{msgs.plugin_intranda_statistics_storagePerProcess_sizeAllTotal}: #{StatisticalQuestionBean.currentPlugin.totalSizeAllFormatted}"  styleClass="pull-right" style="margin-right:20px;"/>
-											<h:outputText value="#{msgs.plugin_intranda_statistics_storagePerProcess_sizeMediaTotal}: #{StatisticalQuestionBean.currentPlugin.totalSizeMediaFormatted}"   styleClass="pull-right" style="margin-right:20px;"/>
-											<h:outputText value="#{msgs.plugin_intranda_statistics_storagePerProcess_sizeMasterTotal}: #{StatisticalQuestionBean.currentPlugin.totalSizeMasterFormatted}" styleClass="pull-right"  style="margin-right:20px;"/>
-										
-										</div>
-		
-										<!-- Datentabelle -->
-										<x:dataTable id="results" styleClass="table table-hover table-nomargin dataTable table-bordered responsive" var="item" value="#{StatisticalQuestionBean.currentPlugin.resultListShort(SessionForm.gsm.showMax)}">
-		
-											<h:column>
-												<f:facet name="header">
-													<h:outputText value="#{msgs.title}" />
-												</f:facet>
-												<h:outputText value="#{item.title}" />
-											</h:column>
-											<h:column>
-												<f:facet name="header">
-													<h:outputText value="#{msgs.plugin_intranda_statistics_storagePerProcess_sizeMaster}" />
-												</f:facet>
-												<h:outputText value="#{item.masterSizeFormatted}" />
-											</h:column>
-											<h:column>
-												<f:facet name="header">
-													<h:outputText value="#{msgs.plugin_intranda_statistics_storagePerProcess_sizeMedia}" />
-												</f:facet>
-												<h:outputText value="#{item.mediaSizeFormatted}" />
-											</h:column>
-											<h:column>
-												<f:facet name="header">
-													<h:outputText value="#{msgs.plugin_intranda_statistics_storagePerProcess_sizeAll}" />
-												</f:facet>
-												<h:outputText value="#{item.totalSizeFormatted}" />
-											</h:column>						
-											
-										</x:dataTable>
-		
-									</div>
-		                        	
-		                        	<!-- ###################### // result table ###################### -->
-		                        	
-		 						</div>
-		                    </div>
-		                </div>
-		            </div>
-	          
-			    </h:panelGroup>
-	
-	            <style>
-	            	.box.box-bordered .table.table-bordered {
-	    				border-right: 1px solid #ddd;
-					}
-				</style>
-	        </h:form>
-    </main>
-    </composite:implementation>
+	<main id="statisticsStoragePerProcess">
+		<h:form id="statisticplugin">
+
+		<div class="row">
+			<div class="col-12">
+
+				<!-- ###################### input form ###################### -->
+
+				<intranda:box
+					boxType="primary"
+					formBox="true"
+					title="#{msgs.auswahl2}"
+					icon="fa-compass"
+				>
+
+					<!-- Filter -->
+					<intranda:formInputText
+						id="filter"
+						name="filtername"
+						label="#{msgs.filter}"
+						field="#{StatisticalQuestionBean.currentPlugin.filter}"
+						help="#{msgs.helpFilter}"
+						fieldStyle="form-control"
+						required="false"
+					/>
+
+						<!-- Generate the statistics or cancel again -->
+						<div class="box__actions">
+							<h:commandButton
+								styleClass="btn btn-primary submitOnEnter pull-right font-size-s margin-bottom-most"
+								id="myStatisticButton"
+								type="submit"
+		            title="#{msgs.calculateStatistics}"
+								action="#{StatisticalQuestionBean.calculate}"
+								value="#{msgs.calculateStatistics}"
+							>
+							</h:commandButton>
+						</div>
+
+						<!-- ###################### // input form ###################### -->
+
+				</intranda:box>
+			</div> <!--/.col-12-->
+		</div> <!--/.row-->
+
+		<h:panelGroup rendered="#{StatisticalQuestionBean.currentPlugin.resultList != null and StatisticalQuestionBean.currentPlugin.resultList.size() gt 0}">
+		<div class="row mt-4">
+			<div class="col-12">
+
+			<!-- ###################### result table ###################### -->
+
+			<intranda:box
+				boxType="neutral"
+				boxPadding="false"
+				icon="fa-pie-chart"
+				title="#{msgs[StatisticalQuestionBean.currentPlugin.title]}"
+			>
+
+			<div class="gw-table gw-table-fixed">
+
+					<div class="gw-table__search">
+						<div class="gw-table__search__length">
+							<h:outputText value="#{msgs.treffer}: #{StatisticalQuestionBean.currentPlugin.resultList.size()}" />
+							<h:outputText value=" - #{msgs.goobiScript_showMax}: #{SessionForm.gsm.showMax}" styleClass="font-light margin-left-10" rendered="#{StatisticalQuestionBean.currentPlugin.resultList.size() gt SessionForm.gsm.showMax}" />
+						</div>
+
+
+					<div class="gw-table__filters">
+
+						<h:outputText
+							value="#{msgs.plugin_intranda_statistics_storagePerProcess_sizeAllTotal}: #{StatisticalQuestionBean.currentPlugin.totalSizeAllFormatted}"
+							styleClass="pull-right"
+							style="margin-right:20px;"
+						/>
+						<h:outputText
+							value="#{msgs.plugin_intranda_statistics_storagePerProcess_sizeMediaTotal}: #{StatisticalQuestionBean.currentPlugin.totalSizeMediaFormatted}"
+							styleClass="pull-right"
+							style="margin-right:20px;"
+						/>
+						<h:outputText
+							value="#{msgs.plugin_intranda_statistics_storagePerProcess_sizeMasterTotal}: #{StatisticalQuestionBean.currentPlugin.totalSizeMasterFormatted}"
+							styleClass="pull-right"
+							style="margin-right:20px;"
+						/>
+
+						<div class="btn-group"
+							title="#{msgs.goobiScript_limitList}"
+						>
+							<button
+								type="button"
+								class="btn btn-blank dropdown-toggle"
+								data-bs-toggle="dropdown"
+								aria-expanded="false"
+								aria-label="#{msgs.goobiScript_limitList}">
+								<i class="fa fa-table" />
+								<span class="caret"></span>
+							</button>
+
+							<ul class="dropdown-menu">
+								<li>
+									<button
+										class="dropdown-item"
+										jsf:action="#{NavigationForm.Reload}"
+										jsf:id="limitResults10">
+										<h:outputText value="#{msgs.goobiScript_setMaxEntries} 10" />
+										<x:updateActionListener property="#{SessionForm.gsm.showMax}" value="10" />
+									</button>
+								</li>
+								<li>
+									<button
+										class="dropdown-item"
+										jsf:action="#{NavigationForm.Reload}"
+										jsf:id="limitResults100">
+										<h:outputText value="#{msgs.goobiScript_setMaxEntries} 100" />
+										<x:updateActionListener property="#{SessionForm.gsm.showMax}" value="100" />
+									</button>
+								</li>
+								<li>
+									<button
+										class="dropdown-item"
+										jsf:action="#{NavigationForm.Reload}"
+										jsf:id="limitResults1000">
+										<h:outputText value="#{msgs.goobiScript_setMaxEntries} 1.000" />
+										<x:updateActionListener property="#{SessionForm.gsm.showMax}" value="1000" />
+									</button>
+								</li>
+								<li>
+									<button
+										class="dropdown-item"
+										jsf:action="#{NavigationForm.Reload}"
+										jsf:id="limitResults10000">
+										<h:outputText value="#{msgs.goobiScript_setMaxEntries} 10.000" />
+										<x:updateActionListener property="#{SessionForm.gsm.showMax}" value="10000" />
+									</button>
+								</li>
+								<li>
+									<button
+										class="dropdown-item"
+										jsf:action="#{NavigationForm.Reload}"
+										jsf:id="limitResults1000000">
+										<h:outputText value="#{msgs.goobiScript_setMaxEntries} 1.000.000" />
+										<x:updateActionListener property="#{SessionForm.gsm.showMax}" value="1000000" />
+									</button>
+								</li>
+							</ul>
+					</div>
+
+				</div>
+			</div>
+
+
+				<!-- Table -->
+				<div class="gw-table__wrapper">
+					<x:dataTable
+						id="results"
+						styleClass="table table-hover table-bordered"
+						var="item"
+						value="#{StatisticalQuestionBean.currentPlugin.resultListShort(SessionForm.gsm.showMax)}"
+					>
+
+						<h:column>
+							<f:facet name="header">
+						<h:outputText value="#{msgs.title}" />
+						</f:facet>
+							<h:outputText value="#{item.title}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+							<h:outputText value="#{msgs.plugin_intranda_statistics_storagePerProcess_sizeMaster}" />
+						</f:facet>
+							<h:outputText value="#{item.masterSizeFormatted}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+							<h:outputText value="#{msgs.plugin_intranda_statistics_storagePerProcess_sizeMedia}" />
+						</f:facet>
+							<h:outputText value="#{item.mediaSizeFormatted}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+							<h:outputText value="#{msgs.plugin_intranda_statistics_storagePerProcess_sizeAll}" />
+						</f:facet>
+							<h:outputText value="#{item.totalSizeFormatted}" />
+						</h:column>
+
+					</x:dataTable>
+
+				</div><!--/.gw-table__wrapper-->
+			</div> <!--/.gw-table-->
+
+		</intranda:box>
+
+		<!-- ###################### // result table ###################### -->
+
+		</div><!--/.col-12-->
+	</div><!--/.row-->
+
+</h:panelGroup>
+
+</h:form>
+</main>
+</composite:implementation>
 
 </ui:composition>
 

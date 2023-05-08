@@ -1,8 +1,14 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:composite="http://xmlns.jcp.org/jsf/composite" xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:x="http://myfaces.apache.org/tomahawk"
-	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
-	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough" xmlns:jsf="http://xmlns.jcp.org/jsf">
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:composite="http://xmlns.jcp.org/jsf/composite"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:x="http://myfaces.apache.org/tomahawk"
+	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/compositesPG"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+>
 
 	<composite:interface>
 	</composite:interface>
@@ -16,95 +22,123 @@
 		<script src="template/js/plugins/flot/jquery.flot.stack.js"></script>
 		<script src="template/js/plugins/flot/jquery.flot.JUMlib.js"></script>
 		<script src="template/js/plugins/flot/jquery.flot.spider.js"></script>
-        
-        <main>
+
+	<main id="statisticsStepPerProject">
+
 		<h:form id="statisticplugin" prependId="false">
-        
+
 			<div class="row">
-				<div class="col-sm-12">
-					<div class="box box-color lightgrey box-bordered">
-						<div class="box-title">
-							<h2>
-								<i class="glyphicon-compass box-icon-fix"></i>
-								<h:outputText value="#{msgs.statisticsSelectProject}" />
-							</h2>
-						</div>
-						<div class="box-content">
-							<div class="row">
-								
-								<div class="col-sm-6">
+				<div class="col-12">
 
-									<h:dataTable styleClass="table table-hover table-bordered" style="border: 1px solid #ddd;"
-										value="#{StatisticalQuestionBean.currentPlugin.projectDataList}" var="projectData">
+					<!--
+			 neutral
+			 -->
+				<intranda:box
+					boxType="neutral"
+					title="#{msgs.statisticsSelectProject}"
+					icon="fa-compass"
+				>
 
-										<x:column>
-											<f:facet name="header">
-												<h:outputText value="#{msgs.auswahl2}" />
-											</f:facet>
-											<h:selectBooleanCheckbox pt:aria-label="#{msgs.statisticsSelectProject}" value="#{projectData.selected}" />
-										</x:column>
+				<div class="row">
+					<div class="col-6">
 
-										<x:column>
-											<f:facet name="header">
-												<h:outputText value="#{msgs.project}" />
-											</f:facet>
-											<h:outputText value="#{projectData.project.titel}" />
-										</x:column>
+						<div class="gw-table">
+							<div class="gw-table__wrapper">
+								<h:dataTable styleClass="table table-hover table-bordered"
+									value="#{StatisticalQuestionBean.currentPlugin.projectDataList}"
+									var="projectData"
+								>
 
-										<x:column>
-											<f:facet name="header">
-												<h:outputText value="#{msgs.enddate}" />
-											</f:facet>
-											<h:outputText value="#{projectData.endDate}" />
-										</x:column>
+									<x:column>
+										<f:facet name="header">
+											<h:outputText value="#{msgs.auswahl2}" />
+										</f:facet>
+										<h:selectBooleanCheckbox pt:aria-label="#{msgs.statisticsSelectProject}" value="#{projectData.selected}" />
+									</x:column>
 
-									</h:dataTable>
-								</div>
-								<div class="controls">
-									<x:commandButton id="myStatisticButton" title="#{msgs.calculateStatistics}"
-										value="#{msgs.calculateStatistics}" action="#{StatisticalQuestionBean.calculate}"
-										styleClass="btn btn-primary">
-									</x:commandButton>
-								</div>
-							</div>
+									<x:column>
+										<f:facet name="header">
+											<h:outputText value="#{msgs.project}" />
+										</f:facet>
+										<h:outputText value="#{projectData.project.titel}" />
+									</x:column>
 
+									<x:column>
+										<f:facet name="header">
+											<h:outputText value="#{msgs.enddate}" />
+										</f:facet>
+										<h:outputText value="#{projectData.endDate}" />
+									</x:column>
+
+								</h:dataTable>
 						</div>
 					</div>
+
+					<div class="box__actions">
+						<x:commandButton
+							id="myStatisticButton"
+							title="#{msgs.calculateStatistics}"
+							value="#{msgs.calculateStatistics}"
+							action="#{StatisticalQuestionBean.calculate}"
+							styleClass="btn btn-neutral-600 me-auto">
+						</x:commandButton>
+					</div>
+
 				</div>
 			</div>
-			
-			
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="box box-bordered">
-						<div class="box-title">
-							<h3>
-								<i class="fa fa-pie-chart"></i>
-								<h:outputText value="#{msgs[StatisticalQuestionBean.currentPlugin.title]}" />
-							</h3>
-						</div>
-						<div class="box-content">
+
+		</intranda:box>
+
+	</div>
+</div>
+
+
+			<div class="row mt-4">
+				<div class="col-12">
+
+					<intranda:box
+						boxType="outline"
+						icon="fa-pie-chart"
+						title="#{msgs[StatisticalQuestionBean.currentPlugin.title]}"
+					>
 
 							<div class="row">
 								<ui:repeat value="#{StatisticalQuestionBean.currentPlugin.projectDataList}"
 									var="projectData" varStatus="status">
 
-									<h:panelGroup layout="block" rendered="#{projectData.selected}" styleClass="col-sm-4"
-										id="element">
-										<h4>
-											<h:outputText value="#{projectData.project.titel}" />
-										</h4>
-										<br />
+									<h:panelGroup
+										layout="block"
+										rendered="#{projectData.selected}"
+										styleClass="col-4 mb-4"
+										id="element"
+									>
 
-										<h:panelGroup rendered="#{projectData.list.size() == 0}">
-											<h:outputText styleClass="alert alert-info alert-dismissable margin-bottom-10" value="#{msgs.statistics_noDataAvailable}" />
-										</h:panelGroup>
+									<h4>
+										<h:outputText value="#{projectData.project.titel}" />
+									</h4>
+									<br />
+
+									<h:panelGroup layout="block" rendered="#{projectData.list.size() == 0}">
+										<div class="alert alert-info">
+											#{msgs.statistics_noDataAvailable}
+										</div>
+									</h:panelGroup>
+
+
+										<style>
+										/* If w/h not set, jquery throws an error when plotting a chart */
+										.flot {
+											width: 100%;
+											height: 300px;
+										}
+										</style>
+
 
 										<h:panelGroup rendered="#{projectData.list.size() gt 0}">
 											<div id="placeholder_#{status.index}" class='flot'></div>
 											<br />
-	
-											<table class="table table-hover table-bordered" style="border: 1px solid #ddd;">
+
+											<table class="table table-hover table-bordered">
 												<ui:repeat var="datarow" value="#{projectData.list}">
 													<tr>
 														<td><i class="fa fa-square" style="color:#{datarow.color}"></i></td>
@@ -113,113 +147,101 @@
 													</tr>
 												</ui:repeat>
 											</table>
-	
 											<br />
-											<button jsf:action="#{projectData.createExcelFile}"
-												jsf:rendered="#{projectData.data != null}" class="expandbutton margin-bottom-10">
-												<span class="btn margin-right-10 fa fa-file-excel-o" />
-	                                            <h:outputText value="#{msgs.createExcel}" />
-											</button>
-											<br />
-											<button jsf:action="#{projectData.createPdfFile}" class="expandbutton"
-												jsf:rendered="#{projectData.data != null}">
-												<span class="btn margin-right-10 fa fa-file-pdf-o" />
-												<h:outputText value="#{msgs.createPdf}" />
-											</button>
-										</h:panelGroup>
 
-										
+											<div class="box__actions justify-content-start">
+												<button
+													jsf:action="#{projectData.createExcelFile}"
+													jsf:rendered="#{projectData.data != null}"
+													class="btn btn-blank">
+													<i class="fa fa-file-excel-o" />
+													<span>
+														<h:outputText value="#{msgs.createExcel}" />
+													</span>
+												</button>
+												<br />
+												<button
+													jsf:action="#{projectData.createPdfFile}"
+													class="btn btn-blank"
+													jsf:rendered="#{projectData.data != null}"
+												>
+													<i class="fa fa-file-pdf-o" />
+													<span>
+														<h:outputText value="#{msgs.createPdf}" />
+													</span>
+												</button>
+											</div>
+										</h:panelGroup>
 
 										<div id="datafield_#{status.index}">
 											<h:inputText value="#{projectData.data}" styleClass="rawdata" style="display:none" />
 										</div>
 
 										<script type="text/javascript">
-											$(document)
-													.ready(
-															function() {
 
-																function plot() {
-																	var element = $("#datafield_#{status.index} input");
-																	var data = $
-																			.parseJSON(element
-																					.val());
-																	function plotWithOptions() {
+											$(document).ready(function() {
 
-																		$
-																				.plot(
-																						'#placeholder_#{status.index}',
-																						data,
-																						{
-																							series : {
-																								pie : {
-																									show : true,
-																									label : {
-																										show : false
-																									}
-																								}
-																							},
-																							grid : {
-																								hoverable : true,
-																								clickable : true
-																							},
-																							legend : {
-																								show : false
-																							}
-																						});
-
-																	}
-																	plotWithOptions();
+													var element = $("#datafield_#{status.index} input");
+													var data = $.parseJSON(element.val());
+													var placeholder = '#placeholder_#{status.index}';
+													var opts = {
+														series : {
+															pie : {
+																show : true,
+																label : {
+																	show : false
 																}
+															}
+														},
+														grid : {
+															hoverable : true,
+															clickable : true
+														},
+														legend : {
+															show : false
+														}
+													};
 
-																$(
-																		"#placeholder_#{status.index}")
-																		.on(
-																				'plotclick',
-																				function(
-																						e,
-																						pos,
-																						obj) {
-																					var div = '<div class="chart-info">'
-																							+ obj.series.label
-																							+ ': '
-																							+ obj.series.data[0][1]
-																							+ '</div>';
-																					if ($('.chart-info')) {
-																						$(
-																								'.chart-info')
-																								.remove();
-																					}
-																					$(
-																							'body')
-																							.append(
-																									div);
-																					$(
-																							'.chart-info')
-																							.hide()
-																							.css(
-																									{
-																										'position' : 'absolute',
-																										'top' : pos.pageY,
-																										'left' : pos.pageX
-																									})
-																							.show();
-																				});
 
-																plot();
+												// Check if an element wwith an ID of placeholder_#{status.index} exists
+												if(document.querySelector(placeholder)) {
+													$.plot(placeholder, data, opts) // Draw diagram
+													$(placeholder).on('plotclick', showPlotInfo)
+												}
 
-															});
+												});
+
+
+												function showPlotInfo(e, pos, obj) {
+													if(!obj) return // Quit if there is no plot object
+													var div = '<div class="chart-info">'
+															+ obj.series.label
+															+ ': '
+															+ obj.series.data[0][1]
+															+ '</div>';
+													if ($('.chart-info')) {
+														$('.chart-info').remove();
+													}
+													$('body').append(div);
+													$('.chart-info').hide()
+														.css({
+															'position' : 'absolute',
+															'top' : pos.pageY,
+															'left' : pos.pageX
+														})
+														.show();
+												};
 										</script>
+
 									</h:panelGroup>
 								</ui:repeat>
 							</div>
 
+					</intranda:box>
 
-						</div>
-					</div>
 				</div>
 			</div>
-			
+
 		</h:form>
         </main>
 	</composite:implementation>
