@@ -4,7 +4,6 @@
 	xmlns:composite="http://xmlns.jcp.org/jsf/composite"
   xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
-  xmlns:x="http://myfaces.apache.org/tomahawk"
 	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/compositesPG"
 	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:jsf="http://xmlns.jcp.org/jsf"
@@ -39,7 +38,7 @@
 							<h:inputText value="#{StatisticalQuestionBean.data}" id="datafield" style="display:none" />
 
 							<div class="col-7">
-								<x:commandLink
+								<h:commandLink
 									id="myStatisticButton"
 									type="button"
 									title="#{msgs.calculateStatistics}"
@@ -49,7 +48,7 @@
 
 									<f:ajax execute="@form" render="@form"></f:ajax>
 
-								</x:commandLink>
+								</h:commandLink>
 								<div id="placeholder" class='flot' style="min-height: 450px;"></div>
 							</div>
 
@@ -141,7 +140,7 @@
 					});
 
 			// AJAX Eventlistener
-			jsf.ajax.addOnEvent(function(data) {
+			faces.ajax.addOnEvent(function(data) {
 				var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
 
 				switch (ajaxstatus) {

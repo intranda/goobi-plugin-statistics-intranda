@@ -6,7 +6,6 @@
     xmlns:composite="http://xmlns.jcp.org/jsf/composite"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:x="http://myfaces.apache.org/tomahawk"
     xmlns:intranda="http://xmlns.jcp.org/jsf/composite/compositesPG"
     xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
@@ -78,7 +77,7 @@
 						<div class="gw-table__wrapper">
 
 							<!-- Datentabelle -->
-							<x:dataTable
+							<h:dataTable
 								id="results"
 								styleClass="table table-hover table-bordered"
 								var="item"
@@ -106,7 +105,7 @@
 									<h:outputText value="#{item.images}" />
 								</h:column>
 
-							</x:dataTable>
+							</h:dataTable>
 
 						</div> <!--/.col-12-->
 					</div> <!--/.row-->
