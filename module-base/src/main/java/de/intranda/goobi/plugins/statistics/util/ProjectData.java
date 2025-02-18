@@ -12,15 +12,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletResponse;
-
 import org.goobi.beans.Project;
 import org.goobi.beans.Step;
 import org.goobi.production.flow.statistics.hibernate.FilterHelper;
-import org.jxls.common.Context;
-import org.jxls.transform.Transformer;
-import org.jxls.util.JxlsHelper;
+import org.jxls.transform.poi.JxlsPoiTemplateFillerBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.Document;
@@ -37,6 +32,9 @@ import com.lowagie.text.pdf.PdfWriter;
 import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.StepManager;
+import io.goobi.workflow.xslt.JxlsOutputStream;
+import jakarta.faces.context.FacesContext;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -196,7 +194,7 @@ public class ProjectData {
     public void createExcelFile() {
         try {
 
-            Map<String, List<PieType>> model = new HashMap<>();
+            Map<String, Object> model = new HashMap<>();
             model.put("groups", list);
             try (InputStream is = new FileInputStream(XLS_TEMPLATE_NAME)) {
 
@@ -206,15 +204,10 @@ public class ProjectData {
                 response.setContentType("application/vnd.ms-excel");
                 response.setHeader("Content-Disposition", "attachment;filename=\"export.xlsx\"");
 
-                Context context = new Context();
-                for (String key : model.keySet()) {
-                    context.putVar(key, model.get(key));
-                }
-
-                JxlsHelper jxlsHelper = JxlsHelper.getInstance();
-                Transformer transformer = jxlsHelper.createTransformer(is, out);
-
-                jxlsHelper.processTemplate(context, transformer);
+                JxlsPoiTemplateFillerBuilder.newInstance()
+                        .withTemplate(is)
+                        .build()
+                        .fill(model, new JxlsOutputStream(out));
 
                 out.flush();
                 facesContext.responseComplete();

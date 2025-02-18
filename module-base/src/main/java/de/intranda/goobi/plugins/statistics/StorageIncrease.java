@@ -67,30 +67,19 @@ public class StorageIncrease extends AbstractStatisticsPlugin implements IStatis
     @Override
     public void calculate() {
 
-        List<Integer> IDlist = ProcessManager.getIdsForFilter(filter);
-        String natSQL = StatisticsFactory.getStorage(this.startDate, this.endDate, this.targetTimeUnit, IDlist).getSQL();
+        List<Integer> idList = ProcessManager.getIdsForFilter(filter);
+        String natSQL = StatisticsFactory.getStorage(this.startDate, this.endDate, this.targetTimeUnit, idList).getSQL();
 
         @SuppressWarnings("rawtypes")
         List list = ProcessManager.runSQL(natSQL);
-
-        //        List<Map<Integer, Double>> value = new ArrayList<Map<Integer, Double>>();
-
-        //        min: 0, ticks: [[0, ""], [1, "hello"], [2, "hi"], [3,"helloagain"]], max: 3
         StringBuilder rawData = new StringBuilder();
         StringBuilder rawAxis = new StringBuilder();
         rawAxis.append("[");
-        //        rawAxis.append("[0, \"\"],");
-        //        "min: 0, max: " + list.size() + ", ticks:
         rawData.append("[");
-        //        rawData.append("[0, \"\"],");
         max = list.size();
         for (int i = 0; i < list.size(); i++) {
             Object obj = list.get(i);
-            //        for (Object obj : list) {
-            //
-            //            Map<Integer, Double> row = new HashMap<Integer, Double>();
-            //
-            //            value.add(row);
+
             try {
                 Object[] objArr = (Object[]) obj;
                 String key = new Converter(objArr[1]).getString() + "";
@@ -102,10 +91,8 @@ public class StorageIncrease extends AbstractStatisticsPlugin implements IStatis
                     rawAxis.append(", ");
                 }
 
-                //                row.put(i++, new Converter(objArr[0]).getGB());
-
             } catch (Exception e) {
-                //                row.put(e.getMessage(), new Double(0));
+                // do nothing
             }
         }
 

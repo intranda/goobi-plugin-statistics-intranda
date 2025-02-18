@@ -4,7 +4,6 @@
 	xmlns:composite="http://xmlns.jcp.org/jsf/composite"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
-  xmlns:x="http://myfaces.apache.org/tomahawk"
 	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/compositesPG"
 	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
 >
@@ -78,7 +77,7 @@
 								for="field01a"
 								styleClass="control-label"
 								value="- #{msgs.orLast} -" />
-							<x:inputText
+							<h:inputText
 								id="field01a"
 								styleClass="form-control"
 								value="#{StatisticalQuestionBean.sourceNumberOfTimeUnitsAsString}"
@@ -125,7 +124,7 @@
 					</div>
 
 					<div class="col-12 col-md-9 d-flex mt-4">
-						<x:commandLink
+						<h:commandLink
 							type="button"
 							id="myStatisticButton"
 							title="#{msgs.calculateStatistics}"
@@ -133,7 +132,7 @@
 							action="#{StatisticalQuestionBean.calculate}"
 							styleClass="btn btn-neutral-600 ms-auto align-self-end">
 						<f:ajax execute="@form" render="@form"></f:ajax>
-						</x:commandLink>
+						</h:commandLink>
 					</div>
 				</div>
 
@@ -201,7 +200,7 @@
 					}
 
 					// AJAX Eventlistener
-					jsf.ajax.addOnEvent(function(data) {
+					faces.ajax.addOnEvent(function(data) {
 						var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
 
 						switch (ajaxstatus) {
