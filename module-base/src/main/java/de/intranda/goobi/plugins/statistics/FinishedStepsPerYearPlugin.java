@@ -3,7 +3,7 @@ package de.intranda.goobi.plugins.statistics;
 /**
  * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
+ * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi
@@ -38,8 +38,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.faces.model.SelectItem;
-
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
@@ -48,6 +46,7 @@ import org.goobi.production.plugin.interfaces.IStatisticPlugin;
 
 import de.intranda.goobi.plugins.statistics.util.FinishedStepsPerYearType;
 import de.sub.goobi.persistence.managers.MySQLHelper;
+import jakarta.faces.model.SelectItem;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
@@ -136,7 +135,7 @@ public class FinishedStepsPerYearPlugin implements IStatisticPlugin {
             connection = MySQLHelper.getInstance().getConnection();
             QueryRunner run = new QueryRunner();
             resultList = run.query(connection, processFilterQuery.toString(),
-                    new BeanListHandler<FinishedStepsPerYearType>(FinishedStepsPerYearType.class));
+                    new BeanListHandler<>(FinishedStepsPerYearType.class));
         } catch (SQLException e) {
             log.error(e);
         } finally {
@@ -155,7 +154,7 @@ public class FinishedStepsPerYearPlugin implements IStatisticPlugin {
      * @return List of selectable step names
      */
     public List<SelectItem> getSelectableSteps() {
-        List<SelectItem> list = new ArrayList<SelectItem>();
+        List<SelectItem> list = new ArrayList<>();
         for (String s : getStepnames()) {
             list.add(new SelectItem(s, s, null));
         }
@@ -195,7 +194,7 @@ public class FinishedStepsPerYearPlugin implements IStatisticPlugin {
         //		if (images.endsWith(", ")) {
         //			images = images.substring(0,images.length()-2);
         //		}
-        //		
+        //
         //		String result = "[{ label:\"Processes\",data:[" + processes + "]},{label:\"Images\",data:[" + images +"]}]";
         //		return result;
     }
