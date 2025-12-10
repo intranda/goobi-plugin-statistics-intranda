@@ -60,7 +60,7 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
             stepList = StepManager.getSteps(null, " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2)  ", null);
         } else {
             stepList = StepManager.getSteps(null,
-                    " (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2) AND schritte.ProzesseID in (select ProzesseID from prozesse where "
+                    " WHERE (bearbeitungsstatus = 1 OR bearbeitungsstatus = 2) AND schritte.ProzesseID in (select ProzesseID from prozesse "
                             + filterString + ")",
                     null);
         }

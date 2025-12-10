@@ -71,7 +71,8 @@ public class ProjectData {
         List<Step> stepList = null;
 
         stepList = StepManager.getSteps("Reihenfolge",
-                " (bearbeitungsstatus = " + status + ") AND schritte.ProzesseID in (select ProzesseID from prozesse where " + filterString + ")",
+                " WHERE (bearbeitungsstatus = " + status + ") AND schritte.ProzesseID in (select ProzesseID from prozesse " + filterString
+                        + ")",
                 null);
 
         //        stepList =
