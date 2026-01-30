@@ -100,7 +100,7 @@ public class UserGroupProjectData {
             stepList = StepManager.getSteps("Reihenfolge", " (bearbeitungsstatus = 1)  ", null);
         } else {
             stepList = StepManager.getSteps("Reihenfolge",
-                    " (bearbeitungsstatus = 1) AND schritte.ProzesseID in (select ProzesseID from prozesse where " + filterString + ")", null);
+                    " WHERE (bearbeitungsstatus = 1) AND schritte.ProzesseID in (select ProzesseID from prozesse " + filterString + ")", null);
         }
 
         Map<String, Integer> counter = new LinkedHashMap<>();

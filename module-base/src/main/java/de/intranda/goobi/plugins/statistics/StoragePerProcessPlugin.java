@@ -3,7 +3,7 @@ package de.intranda.goobi.plugins.statistics;
 /**
  * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
+ * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi
@@ -90,7 +90,7 @@ public class StoragePerProcessPlugin implements IStatisticPlugin {
         String subquery = FilterHelper.criteriaBuilder(filter, false, null, null, null, true, false);
         if (StringUtils.isNotBlank(subquery)) {
             processFilterQuery.append(" AND ");
-            processFilterQuery.append(subquery);
+            processFilterQuery.append(subquery.substring(7));
 
         }
         processFilterQuery.append(" AND ");
@@ -102,7 +102,7 @@ public class StoragePerProcessPlugin implements IStatisticPlugin {
             connection = MySQLHelper.getInstance().getConnection();
             QueryRunner run = new QueryRunner();
             resultList =
-                    run.query(connection, processFilterQuery.toString(), new BeanListHandler<StoragePerProjectType>(StoragePerProjectType.class));
+                    run.query(connection, processFilterQuery.toString(), new BeanListHandler<>(StoragePerProjectType.class));
             totalSizeAll = run.query(connection, "select sum(totalSize) from (" + processFilterQuery.toString() + " ) t",
                     MySQLHelper.resultSetToLongHandler);
             totalSizeMedia = run.query(connection, "SELECT sum(mediaSize) from (" + processFilterQuery.toString() + " ) t",
