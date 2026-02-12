@@ -7,6 +7,7 @@
 	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
 	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:util="http://goobi.io/util"
 >
 
 	<composite:interface>
@@ -32,7 +33,7 @@
 						id="boxStatisticUsergroup"
 						boxType="neutral"
 						title="#{msgs[StatisticalQuestionBean.currentPlugin.title]}"
-						icon="fa-pie-chart"
+						icon="chart-pie"
 					>
 
 							<h:inputText value="#{StatisticalQuestionBean.data}" id="datafield" style="display:none" />
@@ -56,7 +57,7 @@
 								<table class="table table-hover table-bordered">
 									<ui:repeat var="datarow" value="#{StatisticalQuestionBean.currentPlugin.dataList}">
 										<tr>
-											<td><i class="fa fa-square" style="color:#{datarow.color}"></i></td>
+											<td style="color:#{datarow.color}; text-align:center; line-height:0"><util:icon icon="square" /></td>
 											<td><h:outputText value="#{datarow.label}" /></td>
 											<td><h:outputText value="#{datarow.data}" /></td>
 										</tr>
@@ -68,7 +69,7 @@
 										jsf:action="#{StatisticalQuestionBean.currentPlugin.createExcelFile}"
 										class="btn btn-blank expandbutton"
 										jsf:rendered="#{StatisticalQuestionBean.data != null}">
-										<i class="fa fa-file-excel-o" />
+										<util:icon icon="file-spreadsheet" />
 										<span>
 											<h:outputText value="#{msgs.createExcel}" />
 										</span>
@@ -79,7 +80,7 @@
 										class="btn btn-blank"
 										jsf:rendered="#{StatisticalQuestionBean.data != null}">
 
-										<i class="fa fa-file-pdf-o" />
+										<util:icon icon="file-type-pdf" />
 										<span>
 											<h:outputText value="#{msgs.createPdf}" />
 										</span>
