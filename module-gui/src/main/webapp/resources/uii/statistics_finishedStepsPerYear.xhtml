@@ -7,7 +7,8 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
-    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+    xmlns:util="http://goobi.io/util">
 
     <composite:interface>
     </composite:interface>
@@ -25,7 +26,7 @@
 					boxType="primary"
 					boxForm="true"
 					boxPadding="false"
-					icon="fa-compass"
+					icon="compass"
 					title="#{msgs.auswahl2}"
 				>
 
@@ -67,7 +68,7 @@
 					<intranda:box
 						boxType="neutral"
 						boxPadding="false"
-						icon="fa-pie-chart"
+						icon="chart-pie"
 						title="#{msgs[StatisticalQuestionBean.currentPlugin.title]}"
 					>
 
@@ -92,15 +93,13 @@
 								</h:column>
 								<h:column>
 									<f:facet name="header">
-									<i class="fa fa-square fa-square--processes me-2"></i>
-									<h:outputText value="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_processes}" />
+									<util:icon-text icon="square" text="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_processes}" iconClass="fa-square--processes" />
 								</f:facet>
 								<h:outputText value="#{item.processes}" />
 								</h:column>
 								<h:column>
 									<f:facet name="header">
-									<i class="fa fa-square fa-square--images me-2"></i>
-									<h:outputText value="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_images}" />
+									<util:icon-text icon="square" text="#{msgs.plugin_intranda_statistics_finishedStepsPerYear_images}" iconClass="fa-square--images" />
 								</f:facet>
 									<h:outputText value="#{item.images}" />
 								</h:column>
@@ -123,7 +122,7 @@
 
 					<intranda:box
 						boxType="outline"
-						icon="fa-pie-chart"
+						icon="chart-pie"
 						title="#{msgs[StatisticalQuestionBean.currentPlugin.title]}"
 					>
 
