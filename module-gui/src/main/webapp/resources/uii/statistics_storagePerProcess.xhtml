@@ -6,7 +6,8 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
     xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-    xmlns:jsf="http://xmlns.jcp.org/jsf">
+    xmlns:jsf="http://xmlns.jcp.org/jsf"
+    xmlns:util="http://goobi.io/util">
 
     <composite:interface>
     </composite:interface>
@@ -25,7 +26,7 @@
 					boxType="primary"
 					formBox="true"
 					title="#{msgs.auswahl2}"
-					icon="fa-compass"
+					icon="compass"
 				>
 
 					<!-- Filter -->
@@ -67,7 +68,7 @@
 			<intranda:box
 				boxType="neutral"
 				boxPadding="false"
-				icon="fa-pie-chart"
+				icon="chart-pie"
 				title="#{msgs[StatisticalQuestionBean.currentPlugin.title]}"
 			>
 
@@ -107,7 +108,7 @@
 								data-bs-toggle="dropdown"
 								aria-expanded="false"
 								aria-label="#{msgs.goobiScript_limitList}">
-								<i class="fa fa-table" />
+								<util:icon icon="table" />
 								<span class="caret"></span>
 							</button>
 

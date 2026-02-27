@@ -7,7 +7,8 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
     xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-    xmlns:c="http://java.sun.com/jsp/jstl/core">
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:util="http://goobi.io/util">
 
     <composite:interface>
     </composite:interface>
@@ -25,8 +26,7 @@
                     <div class="box box-color lightgrey box-bordered">
                         <div class="box-title">
                             <h3>
-                                <i class="glyphicon-compass box-icon-fix"></i>
-                                <h:outputText value="#{msgs.auswahl2}" />
+                                <util:icon-text icon="compass" text="#{msgs.auswahl2}" />
                             </h3>
                         </div>
                         <div class="box-content">
@@ -54,20 +54,6 @@
                                                 for="cal01"
                                                 showDetail="true"
                                                 styleClass="help-inline font-danger" />
-                                            <!--  
-                                            <p:calendar
-                                                id="cal01"
-                                                value="#{StatisticalQuestionBean.currentPlugin.startDate}"
-                                                pattern="yyyy-MM-dd">
-                                                <f:passThroughAttribute
-                                                    name="placeholder"
-                                                    value="YYYY-MM-DD" />
-                                                <f:passThroughAttribute
-                                                    name="autocomplete"
-                                                    value="off" />
-
-                                            </p:calendar>
--->
                                         </div>
                                     </div>
                                 </div>
@@ -94,21 +80,6 @@
                                                 for="cal02"
                                                 showDetail="true"
                                                 styleClass="help-inline font-danger" />
-                                            <!-- 
-                                        <p:calendar
-                                            id="cal02"
-                                            value="#{StatisticalQuestionBean.currentPlugin.endDate}"
-                                            pattern="yyyy-MM-dd"
-                                           >
-                                            <f:passThroughAttribute
-                                                name="placeholder"
-                                                value="YYYY-MM-DD" />
-                                            <f:passThroughAttribute
-                                                name="autocomplete"
-                                                value="off" />
-                                                <p:ajax event="change" />
-                                        </p:calendar>
- -->
                                         </div>
                                     </div>
                                 </div>
@@ -172,8 +143,7 @@
                         <div class="box box-color lightgrey box-bordered">
                             <div class="box-title">
                                 <h3>
-                                    <i class="fa fa-pie-chart"></i>
-                                    <h:outputText value="#{msgs[StatisticalQuestionBean.currentPlugin.title]}" />
+                                    <util:icon-text icon="chart-pie" text="#{msgs[StatisticalQuestionBean.currentPlugin.title]}" />
                                 </h3>
                             </div>
                             <div class="box-content nopadding">
@@ -192,14 +162,6 @@
                                         styleClass="table table-hover table-nomargin dataTable table-bordered responsive"
                                         var="item"
                                         value="#{StatisticalQuestionBean.currentPlugin.resultList}">
-                                        <!-- 
-                                        <h:column>
-                                            <f:facet name="header">
-                                                <h:outputText value="#{msgs.rawValue}" />
-                                            </f:facet>
-                                            <h:outputText value="#{item}" />
-                                        </h:column>
-                                         -->
                                         <h:column>
                                             <f:facet name="header">
                                                 <h:outputText value="#{msgs.pages}" />
@@ -230,7 +192,7 @@
                             </div>
                                 <div class="form-actions">
                                 <h:commandButton
-                                    styleClass="btn btn-primary  pull-right font-size-s margin-bottom-most"
+                                    styleClass="btn btn-primary pull-right font-size-s margin-bottom-most"
                                     id="excelDownload"
                                     type="submit"
                                     title="#{msgs.download_excel}"

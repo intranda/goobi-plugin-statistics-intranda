@@ -7,6 +7,7 @@
 	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
 	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:util="http://goobi.io/util"
 >
 
 	<composite:interface>
@@ -35,7 +36,7 @@
 				<intranda:box
 					boxType="neutral"
 					title="#{msgs.statisticsSelectProject}"
-					icon="fa-compass"
+					icon="compass"
 				>
 
 				<div class="row">
@@ -97,7 +98,7 @@
 
 					<intranda:box
 						boxType="outline"
-						icon="fa-pie-chart"
+						icon="chart-pie"
 						title="#{msgs[StatisticalQuestionBean.currentPlugin.title]}"
 					>
 
@@ -140,7 +141,7 @@
 											<table class="table table-hover table-bordered">
 												<ui:repeat var="datarow" value="#{projectData.list}">
 													<tr>
-														<td><i class="fa fa-square" style="color:#{datarow.color}"></i></td>
+														<td style="color:#{datarow.color}; text-align:center; line-height:0"><util:icon icon="square" /></td>
 														<td><h:outputText value="#{datarow.label}"  /></td>
 														<td><h:outputText value="#{datarow.data}"  /></td>
 													</tr>
@@ -153,7 +154,7 @@
 													jsf:action="#{projectData.createExcelFile}"
 													jsf:rendered="#{projectData.data != null}"
 													class="btn btn-blank">
-													<i class="fa fa-file-excel-o" />
+													<util:icon icon="file-spreadsheet" />
 													<span>
 														<h:outputText value="#{msgs.createExcel}" />
 													</span>
@@ -164,7 +165,7 @@
 													class="btn btn-blank"
 													jsf:rendered="#{projectData.data != null}"
 												>
-													<i class="fa fa-file-pdf-o" />
+													<util:icon icon="file-type-pdf" />
 													<span>
 														<h:outputText value="#{msgs.createPdf}" />
 													</span>
