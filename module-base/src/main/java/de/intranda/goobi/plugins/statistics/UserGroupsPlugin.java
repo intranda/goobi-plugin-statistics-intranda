@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 @Log4j2
 public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStatisticPlugin {
 
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final String PLUGIN_TITLE = "intranda_statistics_userGroups";
     private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xlsx";
 
@@ -151,13 +153,13 @@ public class UserGroupsPlugin extends AbstractStatisticsPlugin implements IStati
         String possibleValues = "0123456789ABCDEF";
         String hexCode = "#";
         for (int i = 0; i <= 5; i++) {
-            int index = (int) (Math.random() * 15);
+            int index = SECURE_RANDOM.nextInt(16);
             hexCode += possibleValues.charAt(index);
         }
         do {
             hexCode = "#";
             for (int i = 0; i <= 5; i++) {
-                int index = (int) (Math.random() * 15);
+                int index = SECURE_RANDOM.nextInt(16);
                 hexCode += possibleValues.charAt(index);
 
             }

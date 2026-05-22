@@ -28,6 +28,7 @@ package de.intranda.goobi.plugins.statistics.util;
 import java.awt.Color;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -73,6 +74,7 @@ public class UserGroupProjectData {
     private List<PieType> list;
     private String data;
     private String title = "";
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xlsx";
 
     //    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
@@ -146,7 +148,7 @@ public class UserGroupProjectData {
         String hexCode = "#";
         hexCode = "#";
         for (int i = 0; i <= 5; i++) {
-            int index = (int) (Math.random() * 15);
+            int index = SECURE_RANDOM.nextInt(16);
             hexCode += possibleValues.charAt(index);
         }
         return hexCode;

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ public class ProjectData {
     private String data;
     private String title;
 
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final String XLS_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.xlsx";
 
     //    private static final String PDF_TEMPLATE_NAME = "/opt/digiverso/goobi/plugins/statistics/statistics_template.pdf";
@@ -119,7 +121,7 @@ public class ProjectData {
         String possibleValues = "0123456789ABCDEF";
         StringBuilder hexCode = new StringBuilder("#");
         for (int i = 0; i <= 5; i++) {
-            int index = (int) (Math.random() * 15);
+            int index = SECURE_RANDOM.nextInt(16);
             hexCode.append(possibleValues.charAt(index));
         }
         return hexCode.toString();
