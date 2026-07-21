@@ -118,11 +118,7 @@
 									</h4>
 									<br />
 
-									<h:panelGroup layout="block" rendered="#{projectData.list.size() == 0}">
-										<div class="alert alert-info">
-											#{msgs.statistics_noDataAvailable}
-										</div>
-									</h:panelGroup>
+									<util:alert type="info" rendered="#{projectData.list.size() == 0}" message="#{msgs.statistics_noDataAvailable}" />
 
 
 										<style>
