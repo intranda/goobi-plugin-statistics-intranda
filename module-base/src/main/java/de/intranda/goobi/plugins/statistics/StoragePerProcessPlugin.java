@@ -85,16 +85,21 @@ public class StoragePerProcessPlugin implements IStatisticPlugin {
                 "LEFT JOIN (select processid as processid, sum(numericvalue) as mediaSize from history where type = 14 group by processid) tbl2 ON prozesse.ProzesseID = tbl2.processid ");
         processFilterQuery.append(
                 "LEFT JOIN (select processid as processid, sum(numericvalue) as masterSize from history where type = 15 group by processid) tbl3 ON prozesse.ProzesseID = tbl3.processid ");
-        processFilterQuery.append(",projekte ");
-        processFilterQuery.append("WHERE prozesse.ProjekteID = projekte.ProjekteID ");
+        processFilterQuery.append("INNER JOIN projekte ON prozesse.ProjekteID = projekte.ProjekteID ");
+        // criteriaBuilder returns "[ JOIN ... ][ WHERE ... ]" - the join part belongs in the FROM
+        // clause, so split it off rather than appending the whole fragment behind a WHERE
         String subquery = FilterHelper.criteriaBuilder(filter, false, null, null, null, true, false);
-        if (StringUtils.isNotBlank(subquery)) {
-            processFilterQuery.append(" AND ");
-            processFilterQuery.append(subquery.substring(7));
-
+        int whereIndex = subquery.indexOf(" WHERE ");
+        if (whereIndex >= 0) {
+            processFilterQuery.append(subquery, 0, whereIndex);
+            processFilterQuery.append(" WHERE prozesse.istTemplate = false AND ");
+            processFilterQuery.append(subquery, whereIndex + " WHERE ".length(), subquery.length());
+        } else {
+            if (StringUtils.isNotBlank(subquery)) {
+                processFilterQuery.append(subquery);
+            }
+            processFilterQuery.append(" WHERE prozesse.istTemplate = false ");
         }
-        processFilterQuery.append(" AND ");
-        processFilterQuery.append(" prozesse.istTemplate = false ");
 
         Connection connection = null;
         try {
